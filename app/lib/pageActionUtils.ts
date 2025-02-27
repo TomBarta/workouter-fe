@@ -35,16 +35,16 @@ export function setGoal(goalSelectMenu: string | undefined): WorkoutPlan['goal']
     return { type: WorkoutGoalTypes.open }
 }
 
-export function cleanUpPayload(payload: Payload): WorkoutPlan {
+export function cleanUpPayload(payload: Payload): WorkoutPlan { // update this function to also validate that the payload object matches WorkoutPlan; throw if it doesn't ai!
     // Create a new object to avoid modifying the original
     const result = { ...payload };
-    
+
     // Ensure swimmingLocation is set
     result.swimmingLocation = 'indoors';
-    
+
     // Remove goalSelectMenu property
     const { goalSelectMenu: _, ...cleanPayload } = result;
-    
+
     // Return a new object without the goalSelectMenu property
     return cleanPayload as WorkoutPlan;
 }

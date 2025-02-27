@@ -97,6 +97,41 @@ describe('page action helper functions', () => {
         swimmingLocation: 'indoors'
       }));
     });
+    
+    test('should throw error when missing workoutType', () => {
+      const input = { ...testPayload };
+      delete input.workoutType;
+      
+      expect(() => cleanUpPayload(input)).toThrow('Missing required field: workoutType');
+    });
+    
+    test('should throw error when missing activity', () => {
+      const input = { ...testPayload };
+      delete input.activity;
+      
+      expect(() => cleanUpPayload(input)).toThrow('Missing required field: activity');
+    });
+    
+    test('should throw error when missing location', () => {
+      const input = { ...testPayload };
+      delete input.location;
+      
+      expect(() => cleanUpPayload(input)).toThrow('Missing required field: location');
+    });
+    
+    test('should throw error when missing displayName', () => {
+      const input = { ...testPayload };
+      delete input.displayName;
+      
+      expect(() => cleanUpPayload(input)).toThrow('Missing required field: displayName');
+    });
+    
+    test('should throw error when goal is invalid', () => {
+      const input = { ...testPayload };
+      input.goal = {} as any;
+      
+      expect(() => cleanUpPayload(input)).toThrow('Invalid goal: missing type property');
+    });
   });
 });
 

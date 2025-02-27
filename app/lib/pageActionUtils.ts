@@ -35,7 +35,7 @@ export function setGoal(goalSelectMenu: string | undefined): WorkoutPlan['goal']
     return { type: WorkoutGoalTypes.open }
 }
 
-export function cleanUpPayload(payload: Payload): WorkoutPlan { // update this function to also validate that the payload object matches WorkoutPlan; throw if it doesn't ai!
+export function cleanUpPayload(payload: Payload): WorkoutPlan {
     // Create a new object to avoid modifying the original
     const result = { ...payload };
 
@@ -44,6 +44,28 @@ export function cleanUpPayload(payload: Payload): WorkoutPlan { // update this f
 
     // Remove goalSelectMenu property
     const { goalSelectMenu: _, ...cleanPayload } = result;
+
+    // Validate required fields
+    if (!cleanPayload.workoutType) {
+        throw new Error('Missing required field: workoutType');
+    }
+    
+    if (!cleanPayload.activity) {
+        throw new Error('Missing required field: activity');
+    }
+    
+    if (!cleanPayload.location) {
+        throw new Error('Missing required field: location');
+    }
+    
+    if (!cleanPayload.displayName) {
+        throw new Error('Missing required field: displayName');
+    }
+    
+    // Validate goal if it exists
+    if (cleanPayload.goal && !cleanPayload.goal.type) {
+        throw new Error('Invalid goal: missing type property');
+    }
 
     // Return a new object without the goalSelectMenu property
     return cleanPayload as WorkoutPlan;

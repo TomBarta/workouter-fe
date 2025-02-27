@@ -27,13 +27,13 @@ function getWorkoutGoalInput(type: WorkoutGoalTypes) {
       return (
         <div className="form-control w-full max-w-xs">
           <div className="flex items-center gap-2 mb-2">
-            <input 
-              name="distance" 
-              type="number" 
-              min={0} 
-              pattern="\d*" 
-              placeholder="Distance" 
-              className="input input-bordered w-full max-w-xs" 
+            <input
+              name="distance"
+              type="number"
+              min={0}
+              pattern="\d*"
+              placeholder="Distance"
+              className="input input-bordered w-full max-w-xs"
             />
           </div>
           <div className="flex flex-wrap gap-2">
@@ -56,7 +56,7 @@ function getWorkoutGoalInput(type: WorkoutGoalTypes) {
           </div>
         </div>
       );
-
+    // ... from here
     case WorkoutGoalTypes.energy.toLowerCase():
       return (
         <div>
@@ -75,6 +75,7 @@ function getWorkoutGoalInput(type: WorkoutGoalTypes) {
           <input placeholder={TimeUnits.minutes} name={TimeUnits.minutes} type="number" min={0} pattern="\d*" />
           <input placeholder={TimeUnits.seconds} name={TimeUnits.seconds} type="number" min={0} pattern="\d*" />
         </div>
+        // ... to here, update to match the page's style ai!
       );
   }
 }

@@ -21,7 +21,7 @@ function handleFormAction(state: Record<string, unknown>, event: { target: { nam
   return { ...state, [name]: value };
 }
 
-function getWorkoutGoalInput(type: WorkoutGoalTypes) {
+function getWorkoutGoalInput(type: WorkoutGoalTypes) { // change this to a react component ai!
   switch (type) {
     case WorkoutGoalTypes.distance.toLowerCase():
       return (
@@ -61,13 +61,13 @@ function getWorkoutGoalInput(type: WorkoutGoalTypes) {
       return (
         <div className="form-control w-full max-w-xs">
           <div className="flex items-center gap-2 mb-2">
-            <input 
-              name="energy" 
-              type="number" 
-              min={0} 
-              pattern="\d*" 
-              placeholder="Energy" 
-              className="input input-bordered w-full max-w-xs" 
+            <input
+              name="energy"
+              type="number"
+              min={0}
+              pattern="\d*"
+              placeholder="Energy"
+              className="input input-bordered w-full max-w-xs"
             />
           </div>
           <div className="flex flex-wrap gap-2">
@@ -88,32 +88,32 @@ function getWorkoutGoalInput(type: WorkoutGoalTypes) {
         <div className="form-control w-full max-w-xs">
           <div className="flex items-center gap-2">
             <div className="flex flex-wrap gap-2">
-              <input 
-                placeholder={TimeUnits.hours} 
-                name={TimeUnits.hours} 
-                type="number" 
-                min={0} 
+              <input
+                placeholder={TimeUnits.hours}
+                name={TimeUnits.hours}
+                type="number"
+                min={0}
                 max={23}
-                pattern="\d*" 
-                className="input input-bordered w-20" 
+                pattern="\d*"
+                className="input input-bordered w-20"
               />
-              <input 
-                placeholder={TimeUnits.minutes} 
-                name={TimeUnits.minutes} 
-                type="number" 
-                min={0} 
+              <input
+                placeholder={TimeUnits.minutes}
+                name={TimeUnits.minutes}
+                type="number"
+                min={0}
                 max={59}
-                pattern="\d*" 
-                className="input input-bordered w-20" 
+                pattern="\d*"
+                className="input input-bordered w-20"
               />
-              <input 
-                placeholder={TimeUnits.seconds} 
-                name={TimeUnits.seconds} 
-                type="number" 
-                min={0} 
+              <input
+                placeholder={TimeUnits.seconds}
+                name={TimeUnits.seconds}
+                type="number"
+                min={0}
                 max={59}
-                pattern="\d*" 
-                className="input input-bordered w-20" 
+                pattern="\d*"
+                className="input input-bordered w-20"
               />
             </div>
           </div>

@@ -43,7 +43,7 @@ export function cleanUpPayload(payload: Payload): WorkoutPlan {
     result.swimmingLocation = 'indoors';
     
     // Remove goalSelectMenu property
-    const { goalSelectMenu, ...cleanPayload } = result;
+    const { goalSelectMenu: _, ...cleanPayload } = result;
     
     // Return a new object without the goalSelectMenu property
     return cleanPayload as WorkoutPlan;

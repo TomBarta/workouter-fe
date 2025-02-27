@@ -25,19 +25,36 @@ function getWorkoutGoalInput(type: WorkoutGoalTypes) {
   switch (type) {
     case WorkoutGoalTypes.distance.toLowerCase():
       return (
-        // from here ....
-        <div>
-          <input name="distance" type="number" min={0} pattern="\d*" />
-          <input type="radio" name="unit" value={DistanceUnits.miles} className="radio" />
-          <label>{DistanceUnits.miles}</label>
-          <input type="radio" name="unit" value={DistanceUnits.kilometers} className="radio" />
-          <label>{DistanceUnits.kilometers}</label>
-          <input type="radio" name="unit" value={DistanceUnits.yards} className="radio" />
-          <label>{DistanceUnits.yards}</label>
-          <input type="radio" name="unit" value={DistanceUnits.meters} className="radio" />
-          <label>{DistanceUnits.meters}</label>
+        <div className="form-control w-full max-w-xs">
+          <div className="flex items-center gap-2 mb-2">
+            <input 
+              name="distance" 
+              type="number" 
+              min={0} 
+              pattern="\d*" 
+              placeholder="Distance" 
+              className="input input-bordered w-full max-w-xs" 
+            />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <label className="label cursor-pointer gap-1">
+              <input type="radio" name="unit" value={DistanceUnits.miles} className="radio radio-sm" />
+              <span className="label-text">{DistanceUnits.miles}</span>
+            </label>
+            <label className="label cursor-pointer gap-1">
+              <input type="radio" name="unit" value={DistanceUnits.kilometers} className="radio radio-sm" />
+              <span className="label-text">{DistanceUnits.kilometers}</span>
+            </label>
+            <label className="label cursor-pointer gap-1">
+              <input type="radio" name="unit" value={DistanceUnits.yards} className="radio radio-sm" />
+              <span className="label-text">{DistanceUnits.yards}</span>
+            </label>
+            <label className="label cursor-pointer gap-1">
+              <input type="radio" name="unit" value={DistanceUnits.meters} className="radio radio-sm" />
+              <span className="label-text">{DistanceUnits.meters}</span>
+            </label>
+          </div>
         </div>
-        // ... to here, update the styling to match the rest of this page ai!
       );
 
     case WorkoutGoalTypes.energy.toLowerCase():

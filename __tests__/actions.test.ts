@@ -36,19 +36,29 @@ describe('page action helper functions', () => {
   describe('setGoal', () => {
     test.each([
       ['open', { type: WorkoutGoalTypes.open }],
+      ['distance', { type: WorkoutGoalTypes.distance }],
+      ['time', { type: WorkoutGoalTypes.time }],
+      ['calories', { type: WorkoutGoalTypes.energy }],
+      ['energy', { type: WorkoutGoalTypes.energy }],
       [undefined, { type: WorkoutGoalTypes.open }],
       [null, { type: WorkoutGoalTypes.open }],
       ['', { type: WorkoutGoalTypes.open }],
+      ['invalid', { type: WorkoutGoalTypes.open }],
     ])('setGoal(%s) should return goal with type %s', (arg, expected) => {
       expect(setGoal(arg as string | undefined)).toMatchObject(expected);
     });
     
-    test('returns correct goal type based on input', () => {
-      expect(setGoal('open')).toMatchObject({ type: WorkoutGoalTypes.open });
-      expect(setGoal('distance')).toMatchObject({ type: WorkoutGoalTypes.distance });
-      expect(setGoal('time')).toMatchObject({ type: WorkoutGoalTypes.time });
-      expect(setGoal('calories')).toMatchObject({ type: WorkoutGoalTypes.energy });
-      expect(setGoal('energy')).toMatchObject({ type: WorkoutGoalTypes.energy });
+    test('returns goal objects with correct structure', () => {
+      // Check that the returned objects have the correct structure
+      const openGoal = setGoal('open');
+      const distanceGoal = setGoal('distance');
+      const timeGoal = setGoal('time');
+      const energyGoal = setGoal('calories');
+      
+      expect(openGoal).toHaveProperty('type', WorkoutGoalTypes.open);
+      expect(distanceGoal).toHaveProperty('type', WorkoutGoalTypes.distance);
+      expect(timeGoal).toHaveProperty('type', WorkoutGoalTypes.time);
+      expect(energyGoal).toHaveProperty('type', WorkoutGoalTypes.energy);
     });
   });
 
@@ -131,6 +141,27 @@ describe('page action helper functions', () => {
       input.goal = {} as any;
       
       expect(() => cleanUpPayload(input)).toThrow('Invalid goal: missing type property');
+    });
+    
+    test('should always set swimmingLocation to indoors', () => {
+      const input = { ...testPayload, swimmingLocation: 'outdoors' as any };
+      const result = cleanUpPayload(input);
+      
+      expect(result.swimmingLocation).toBe('indoors');
+    });
+    
+    test('should handle complex goal objects', () => {
+      const input = { 
+        ...testPayload,
+        goal: { 
+          type: WorkoutGoalTypes.distance,
+          distance: 5,
+          unit: DistanceUnits.kilometers
+        }
+      };
+      
+      const result = cleanUpPayload(input);
+      expect(result.goal).toEqual(input.goal);
     });
   });
 });

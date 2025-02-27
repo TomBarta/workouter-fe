@@ -25,6 +25,7 @@ function getWorkoutGoalInput(type: WorkoutGoalTypes) {
   switch (type) {
     case WorkoutGoalTypes.distance.toLowerCase():
       return (
+        // from here ....
         <div>
           <input name="distance" type="number" min={0} pattern="\d*" />
           <input type="radio" name="unit" value={DistanceUnits.miles} className="radio" />
@@ -36,6 +37,7 @@ function getWorkoutGoalInput(type: WorkoutGoalTypes) {
           <input type="radio" name="unit" value={DistanceUnits.meters} className="radio" />
           <label>{DistanceUnits.meters}</label>
         </div>
+        // ... to here, update the styling to match the rest of this page ai!
       );
 
     case WorkoutGoalTypes.energy.toLowerCase():

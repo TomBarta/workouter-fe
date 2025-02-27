@@ -21,104 +21,111 @@ function handleFormAction(state: Record<string, unknown>, event: { target: { nam
   return { ...state, [name]: value };
 }
 
-function getWorkoutGoalInput(type: WorkoutGoalTypes) { // change this to a react component ai!
+// Workout goal input components
+const DistanceGoalInput = () => (
+  <div className="form-control w-full max-w-xs">
+    <div className="flex items-center gap-2 mb-2">
+      <input
+        name="distance"
+        type="number"
+        min={0}
+        pattern="\d*"
+        placeholder="Distance"
+        className="input input-bordered w-full max-w-xs"
+      />
+    </div>
+    <div className="flex flex-wrap gap-2">
+      <label className="label cursor-pointer gap-1">
+        <input type="radio" name="unit" value={DistanceUnits.miles} className="radio radio-sm" />
+        <span className="label-text">{DistanceUnits.miles}</span>
+      </label>
+      <label className="label cursor-pointer gap-1">
+        <input type="radio" name="unit" value={DistanceUnits.kilometers} className="radio radio-sm" />
+        <span className="label-text">{DistanceUnits.kilometers}</span>
+      </label>
+      <label className="label cursor-pointer gap-1">
+        <input type="radio" name="unit" value={DistanceUnits.yards} className="radio radio-sm" />
+        <span className="label-text">{DistanceUnits.yards}</span>
+      </label>
+      <label className="label cursor-pointer gap-1">
+        <input type="radio" name="unit" value={DistanceUnits.meters} className="radio radio-sm" />
+        <span className="label-text">{DistanceUnits.meters}</span>
+      </label>
+    </div>
+  </div>
+);
+
+const EnergyGoalInput = () => (
+  <div className="form-control w-full max-w-xs">
+    <div className="flex items-center gap-2 mb-2">
+      <input
+        name="energy"
+        type="number"
+        min={0}
+        pattern="\d*"
+        placeholder="Energy"
+        className="input input-bordered w-full max-w-xs"
+      />
+    </div>
+    <div className="flex flex-wrap gap-2">
+      <label className="label cursor-pointer gap-1">
+        <input type="radio" name="unit" value={EnergyUnits.calories} className="radio radio-sm" />
+        <span className="label-text">{EnergyUnits.calories}</span>
+      </label>
+      <label className="label cursor-pointer gap-1">
+        <input type="radio" name="unit" value={EnergyUnits.kilocalories} className="radio radio-sm" />
+        <span className="label-text">{EnergyUnits.kilocalories}</span>
+      </label>
+    </div>
+  </div>
+);
+
+const TimeGoalInput = () => (
+  <div className="form-control w-full max-w-xs">
+    <div className="flex items-center gap-2">
+      <div className="flex flex-wrap gap-2">
+        <input
+          placeholder={TimeUnits.hours}
+          name={TimeUnits.hours}
+          type="number"
+          min={0}
+          max={23}
+          pattern="\d*"
+          className="input input-bordered w-20"
+        />
+        <input
+          placeholder={TimeUnits.minutes}
+          name={TimeUnits.minutes}
+          type="number"
+          min={0}
+          max={59}
+          pattern="\d*"
+          className="input input-bordered w-20"
+        />
+        <input
+          placeholder={TimeUnits.seconds}
+          name={TimeUnits.seconds}
+          type="number"
+          min={0}
+          max={59}
+          pattern="\d*"
+          className="input input-bordered w-20"
+        />
+      </div>
+    </div>
+  </div>
+);
+
+function WorkoutGoalInput({ type }: { type: WorkoutGoalTypes }) {
   switch (type) {
     case WorkoutGoalTypes.distance.toLowerCase():
-      return (
-        <div className="form-control w-full max-w-xs">
-          <div className="flex items-center gap-2 mb-2">
-            <input
-              name="distance"
-              type="number"
-              min={0}
-              pattern="\d*"
-              placeholder="Distance"
-              className="input input-bordered w-full max-w-xs"
-            />
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <label className="label cursor-pointer gap-1">
-              <input type="radio" name="unit" value={DistanceUnits.miles} className="radio radio-sm" />
-              <span className="label-text">{DistanceUnits.miles}</span>
-            </label>
-            <label className="label cursor-pointer gap-1">
-              <input type="radio" name="unit" value={DistanceUnits.kilometers} className="radio radio-sm" />
-              <span className="label-text">{DistanceUnits.kilometers}</span>
-            </label>
-            <label className="label cursor-pointer gap-1">
-              <input type="radio" name="unit" value={DistanceUnits.yards} className="radio radio-sm" />
-              <span className="label-text">{DistanceUnits.yards}</span>
-            </label>
-            <label className="label cursor-pointer gap-1">
-              <input type="radio" name="unit" value={DistanceUnits.meters} className="radio radio-sm" />
-              <span className="label-text">{DistanceUnits.meters}</span>
-            </label>
-          </div>
-        </div>
-      );
-    // ... from here
+      return <DistanceGoalInput />;
     case WorkoutGoalTypes.energy.toLowerCase():
-      return (
-        <div className="form-control w-full max-w-xs">
-          <div className="flex items-center gap-2 mb-2">
-            <input
-              name="energy"
-              type="number"
-              min={0}
-              pattern="\d*"
-              placeholder="Energy"
-              className="input input-bordered w-full max-w-xs"
-            />
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <label className="label cursor-pointer gap-1">
-              <input type="radio" name="unit" value={EnergyUnits.calories} className="radio radio-sm" />
-              <span className="label-text">{EnergyUnits.calories}</span>
-            </label>
-            <label className="label cursor-pointer gap-1">
-              <input type="radio" name="unit" value={EnergyUnits.kilocalories} className="radio radio-sm" />
-              <span className="label-text">{EnergyUnits.kilocalories}</span>
-            </label>
-          </div>
-        </div>
-      );
-
+      return <EnergyGoalInput />;
     case WorkoutGoalTypes.time.toLowerCase():
-      return (
-        <div className="form-control w-full max-w-xs">
-          <div className="flex items-center gap-2">
-            <div className="flex flex-wrap gap-2">
-              <input
-                placeholder={TimeUnits.hours}
-                name={TimeUnits.hours}
-                type="number"
-                min={0}
-                max={23}
-                pattern="\d*"
-                className="input input-bordered w-20"
-              />
-              <input
-                placeholder={TimeUnits.minutes}
-                name={TimeUnits.minutes}
-                type="number"
-                min={0}
-                max={59}
-                pattern="\d*"
-                className="input input-bordered w-20"
-              />
-              <input
-                placeholder={TimeUnits.seconds}
-                name={TimeUnits.seconds}
-                type="number"
-                min={0}
-                max={59}
-                pattern="\d*"
-                className="input input-bordered w-20"
-              />
-            </div>
-          </div>
-        </div>
-      );
+      return <TimeGoalInput />;
+    default:
+      return null;
   }
 }
 
@@ -214,7 +221,7 @@ export default function Index() {
                       </label>
                     </div>
                     <div className="pt-2">
-                      {getWorkoutGoalInput(formState?.goal as WorkoutGoalTypes)}
+                      <WorkoutGoalInput type={formState?.goal as WorkoutGoalTypes} />
                     </div>
                     <div className="pt-2">
                       <label className="form-control w-full max-w-xs">

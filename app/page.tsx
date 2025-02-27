@@ -59,23 +59,65 @@ function getWorkoutGoalInput(type: WorkoutGoalTypes) {
     // ... from here
     case WorkoutGoalTypes.energy.toLowerCase():
       return (
-        <div>
-          <input name="energy" type="number" min={0} pattern="\d*" />
-          <input type="radio" name="unit" value={EnergyUnits.calories} className="radio" />
-          <label>{EnergyUnits.calories}</label>
-          <input type="radio" name="unit" value={EnergyUnits.kilocalories} className="radio" />
-          <label>{EnergyUnits.kilocalories}</label>
+        <div className="form-control w-full max-w-xs">
+          <div className="flex items-center gap-2 mb-2">
+            <input 
+              name="energy" 
+              type="number" 
+              min={0} 
+              pattern="\d*" 
+              placeholder="Energy" 
+              className="input input-bordered w-full max-w-xs" 
+            />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <label className="label cursor-pointer gap-1">
+              <input type="radio" name="unit" value={EnergyUnits.calories} className="radio radio-sm" />
+              <span className="label-text">{EnergyUnits.calories}</span>
+            </label>
+            <label className="label cursor-pointer gap-1">
+              <input type="radio" name="unit" value={EnergyUnits.kilocalories} className="radio radio-sm" />
+              <span className="label-text">{EnergyUnits.kilocalories}</span>
+            </label>
+          </div>
         </div>
       );
 
     case WorkoutGoalTypes.time.toLowerCase():
       return (
-        <div className="flex">
-          <input placeholder={TimeUnits.hours} name={TimeUnits.hours} type="number" min={0} pattern="\d*" />
-          <input placeholder={TimeUnits.minutes} name={TimeUnits.minutes} type="number" min={0} pattern="\d*" />
-          <input placeholder={TimeUnits.seconds} name={TimeUnits.seconds} type="number" min={0} pattern="\d*" />
+        <div className="form-control w-full max-w-xs">
+          <div className="flex items-center gap-2">
+            <div className="flex flex-wrap gap-2">
+              <input 
+                placeholder={TimeUnits.hours} 
+                name={TimeUnits.hours} 
+                type="number" 
+                min={0} 
+                max={23}
+                pattern="\d*" 
+                className="input input-bordered w-20" 
+              />
+              <input 
+                placeholder={TimeUnits.minutes} 
+                name={TimeUnits.minutes} 
+                type="number" 
+                min={0} 
+                max={59}
+                pattern="\d*" 
+                className="input input-bordered w-20" 
+              />
+              <input 
+                placeholder={TimeUnits.seconds} 
+                name={TimeUnits.seconds} 
+                type="number" 
+                min={0} 
+                max={59}
+                pattern="\d*" 
+                className="input input-bordered w-20" 
+              />
+            </div>
+          </div>
         </div>
-        // ... to here, update to match the page's style ai!
       );
   }
 }

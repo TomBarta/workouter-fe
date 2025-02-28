@@ -1,6 +1,6 @@
 import { cleanUpPayload, Payload, setGoal, setWorkoutType } from '@/app/lib/pageActionUtils'
 import { DistanceUnits, HKWorkoutActivityType, WorkoutGoalTypes, workoutType } from '@/app/utils/workouts'
-import { beforeEach, describe, expect, test } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 describe('page action helper functions', () => {
   let testPayload: Payload;
@@ -108,39 +108,69 @@ describe('page action helper functions', () => {
       }));
     });
     
-    test('should throw error when missing workoutType', () => {
+    test('should provide default workoutType when missing', () => {
       const input = { ...testPayload };
       delete input.workoutType;
       
-      expect(() => cleanUpPayload(input)).toThrow('Missing required field: workoutType');
+      const consoleSpy = vi.spyOn(console, 'warn');
+      const result = cleanUpPayload(input);
+      
+      expect(consoleSpy).toHaveBeenCalledWith('Missing required field: workoutType');
+      expect(result.workoutType).toBe(workoutType.singleGoalWorkout);
+      
+      consoleSpy.mockRestore();
     });
     
-    test('should throw error when missing activity', () => {
+    test('should provide default activity when missing', () => {
       const input = { ...testPayload };
       delete input.activity;
       
-      expect(() => cleanUpPayload(input)).toThrow('Missing required field: activity');
+      const consoleSpy = vi.spyOn(console, 'warn');
+      const result = cleanUpPayload(input);
+      
+      expect(consoleSpy).toHaveBeenCalledWith('Missing required field: activity');
+      expect(result.activity).toBe('running');
+      
+      consoleSpy.mockRestore();
     });
     
-    test('should throw error when missing location', () => {
+    test('should provide default location when missing', () => {
       const input = { ...testPayload };
       delete input.location;
       
-      expect(() => cleanUpPayload(input)).toThrow('Missing required field: location');
+      const consoleSpy = vi.spyOn(console, 'warn');
+      const result = cleanUpPayload(input);
+      
+      expect(consoleSpy).toHaveBeenCalledWith('Missing required field: location');
+      expect(result.location).toBe('indoor');
+      
+      consoleSpy.mockRestore();
     });
     
-    test('should throw error when missing displayName', () => {
+    test('should provide default displayName when missing', () => {
       const input = { ...testPayload };
       delete input.displayName;
       
-      expect(() => cleanUpPayload(input)).toThrow('Missing required field: displayName');
+      const consoleSpy = vi.spyOn(console, 'warn');
+      const result = cleanUpPayload(input);
+      
+      expect(consoleSpy).toHaveBeenCalledWith('Missing required field: displayName');
+      expect(result.displayName).toBe('Untitled Workout');
+      
+      consoleSpy.mockRestore();
     });
     
-    test('should throw error when goal is invalid', () => {
+    test('should provide default goal when invalid', () => {
       const input = { ...testPayload };
       input.goal = {} as any;
       
-      expect(() => cleanUpPayload(input)).toThrow('Invalid goal: missing type property');
+      const consoleSpy = vi.spyOn(console, 'warn');
+      const result = cleanUpPayload(input);
+      
+      expect(consoleSpy).toHaveBeenCalledWith('Invalid goal: missing type property');
+      expect(result.goal).toEqual({ type: WorkoutGoalTypes.open });
+      
+      consoleSpy.mockRestore();
     });
     
     test('should always set swimmingLocation to indoors', () => {

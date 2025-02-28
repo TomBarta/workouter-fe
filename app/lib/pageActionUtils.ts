@@ -41,8 +41,8 @@ export function cleanUpPayload(payload: Payload): WorkoutPlan {
 
     // Ensure swimmingLocation is set
     result.swimmingLocation = 'indoors';
-
-    // Remove goalSelectMenu property
+    
+        // Remove goalSelectMenu property
     const { goalSelectMenu: _, ...cleanPayload } = result;
 
     // Validate required fields

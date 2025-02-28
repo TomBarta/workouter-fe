@@ -1,4 +1,4 @@
-import { WorkoutGoalTypes, WorkoutPlan, workoutType } from "../utils/workouts"
+import { HKWorkoutActivityType, WorkoutGoalTypes, WorkoutPlan, workoutType } from "../utils/workouts"
 
 export interface Payload extends WorkoutPlan {
     swimmingLocation: 'indoors'
@@ -41,8 +41,8 @@ export function cleanUpPayload(payload: Payload): WorkoutPlan {
 
     // Ensure swimmingLocation is set
     result.swimmingLocation = 'indoors';
-    
-        // Remove goalSelectMenu property
+
+    // Remove goalSelectMenu property
     const { goalSelectMenu: _, ...cleanPayload } = result;
 
     // Validate required fields
@@ -52,8 +52,7 @@ export function cleanUpPayload(payload: Payload): WorkoutPlan {
     }
 
     if (!cleanPayload.activityType) {
-        console.warn('Missing required field: activityType');
-        cleanPayload.activityType = 'running';
+        console.warn('Missing required field: activityType');;  // throw here instead of warning ai!
     }
 
     if (!cleanPayload.location) {

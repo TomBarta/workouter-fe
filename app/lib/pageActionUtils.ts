@@ -46,30 +46,25 @@ export function cleanUpPayload(payload: Payload): WorkoutPlan {
     const { goalSelectMenu: _, ...cleanPayload } = result;
 
     // Validate required fields
-    if (!cleanPayload.workoutType) {
-        console.warn('Missing required field: workoutType');
-        cleanPayload.workoutType = workoutType.singleGoalWorkout;
+    if (!cleanPayload.workoutType) { // instead of throwing, log that this is missing ai!
+        throw new Error('Missing required field: workoutType');
     }
 
-    if (!cleanPayload.activity) {
-        console.warn('Missing required field: activity');
-        cleanPayload.activity = 'running';
+    if (!cleanPayload.activityType) {
+        throw new Error('Missing required field: activityType');
     }
 
     if (!cleanPayload.location) {
-        console.warn('Missing required field: location');
-        cleanPayload.location = 'indoor';
+        throw new Error('Missing required field: location');
     }
 
     if (!cleanPayload.displayName) {
-        console.warn('Missing required field: displayName');
-        cleanPayload.displayName = 'Untitled Workout';
+        throw new Error('Missing required field: displayName');
     }
 
     // Validate goal if it exists
     if (cleanPayload.goal && !cleanPayload.goal.type) {
-        console.warn('Invalid goal: missing type property');
-        cleanPayload.goal = { type: WorkoutGoalTypes.open };
+        throw new Error('Invalid goal: missing type property');
     }
 
     // Return a new object without the goalSelectMenu property

@@ -121,17 +121,11 @@ describe('page action helper functions', () => {
       consoleSpy.mockRestore();
     });
     
-    test('should provide default activity when missing', () => {
+    test('should throw error when missing activityType', () => {
       const input = { ...testPayload };
-      delete input.activity;
+      delete input.activityType;
       
-      const consoleSpy = vi.spyOn(console, 'warn');
-      const result = cleanUpPayload(input);
-      
-      expect(consoleSpy).toHaveBeenCalledWith('Missing required field: activity');
-      expect(result.activity).toBe('running');
-      
-      consoleSpy.mockRestore();
+      expect(() => cleanUpPayload(input)).toThrow('Missing required field: activityType');
     });
     
     test('should provide default location when missing', () => {

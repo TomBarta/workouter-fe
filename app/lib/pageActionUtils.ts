@@ -52,7 +52,7 @@ export function cleanUpPayload(payload: Payload): WorkoutPlan {
     }
 
     if (!cleanPayload.activityType) {
-        console.warn('Missing required field: activityType');;  // throw here instead of warning ai!
+        throw new Error('Missing required field: activityType');
     }
 
     if (!cleanPayload.location) {

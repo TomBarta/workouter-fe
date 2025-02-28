@@ -14,7 +14,7 @@ describe('createWorkout', () => {
     // Create a new FormData object for each test
     mockFormData = new FormData()
     mockFormData.append('displayName', 'Test Workout')
-    mockFormData.append('activity', 'running')
+    mockFormData.append('activityType', 'running')
     mockFormData.append('location', 'indoor')
     mockFormData.append('goalSelectMenu', 'distance')
   })
@@ -101,5 +101,61 @@ describe('createWorkout', () => {
     
     // Check that the response was processed correctly
     expect(result).toEqual({ success: false, data: 'Error message' })
+  })
+  
+  test('should handle network errors', async () => {
+    // Mock fetch to throw a network error
+    global.fetch = vi.fn().mockRejectedValue(new Error('Network error'))
+    
+    const result = await createWorkout(mockFormData)
+    
+    // Check that the error was handled correctly
+    expect(result).toEqual({ 
+      success: false, 
+      data: 'Failed to create workout: Network error' 
+    })
+  })
+  
+  test('should correctly serialize form data to JSON', async () => {
+    // Set up a more complete form data
+    const completeFormData = new FormData()
+    completeFormData.append('displayName', 'Complete Test Workout')
+    completeFormData.append('activityType', 'running')
+    completeFormData.append('location', 'outdoor')
+    completeFormData.append('goalSelectMenu', 'distance')
+    completeFormData.append('distanceValue', '5')
+    completeFormData.append('distanceUnit', 'km')
+    
+    // Mock successful response
+    const mockResponse = {
+      ok: true,
+      headers: {
+        get: vi.fn().mockReturnValue('application/json')
+      },
+      json: vi.fn().mockResolvedValue({ id: '123', success: true })
+    }
+    
+    global.fetch = vi.fn().mockResolvedValue(mockResponse)
+    
+    await createWorkout(completeFormData)
+    
+    // Check that fetch was called with correctly serialized JSON
+    expect(fetch).toHaveBeenCalledWith('http://127.0.0.1:8080/workout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: expect.stringContaining('"displayName":"Complete Test Workout"')
+    })
+    
+    // Parse the body to verify all fields were included
+    const callArgs = (fetch as any).mock.calls[0][1]
+    const bodyObj = JSON.parse(callArgs.body)
+    
+    expect(bodyObj).toEqual(expect.objectContaining({
+      displayName: 'Complete Test Workout',
+      activityType: 'running',
+      location: 'outdoor'
+    }))
   })
 })

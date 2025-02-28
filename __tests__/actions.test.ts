@@ -9,7 +9,7 @@ describe('page action helper functions', () => {
     // Reset test payload before each test
     testPayload = {
       workoutType: workoutType.singleGoalWorkout,
-      activity: HKWorkoutActivityType.running,
+      activityType: HKWorkoutActivityType.running,
       location: "indoor",
       displayName: 'test display name',
       goalSelectMenu: 'running',
@@ -186,6 +186,14 @@ describe('page action helper functions', () => {
       
       const result = cleanUpPayload(input);
       expect(result.goal).toEqual(input.goal);
+    });
+    
+    test('should handle missing swimmingLocation', () => {
+      const input = { ...testPayload };
+      delete input.swimmingLocation;
+      
+      const result = cleanUpPayload(input);
+      expect(result.swimmingLocation).toBe('indoors');
     });
   });
 });

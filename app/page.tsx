@@ -231,6 +231,14 @@ export default function Index() {
                         <input name="displayName" type="text" placeholder="Name" className="input input-bordered w-full max-w-xs" />
                       </label>
                     </div>
+                    <div className="pt-2">
+                      <label className="form-control w-full max-w-xs">
+                        <div className="label sr-only">
+                          <span className="label-text">Author</span>
+                        </div>
+                        <input name="author" type="text" placeholder="Author" className="input input-bordered w-full max-w-xs" />
+                      </label>
+                    </div>
                   </>
                 )}
 

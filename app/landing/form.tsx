@@ -1,25 +1,90 @@
 import { createWorkout } from "@/app/lib/actions";
-import { activities, DistanceUnits, EnergyUnits, TimeUnits, workoutGoals, WorkoutGoalTypes, workoutType } from "@/app/utils/workouts";
+import { activities, DistanceUnits, EnergyUnits, TimeUnits, workoutGoals, WorkoutGoalTypes, WorkoutPlan, workoutType } from "@/app/utils/workouts";
 import Form from 'next/form';
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode, JSX } from "react";
 import { useActionState } from "react";
 
+// Sport selector component
+const SportSelector = (): ReactNode => (
+  <div className="w-full max-w-xs">
+    <label className="form-control w-full">
+      <div className="label sr-only">
+        <span className="label-text">Sport</span>
+      </div>
+      <select name="activityType" className="select select-bordered w-full" required>
+        <option disabled selected>Sport</option>
+        {activities().map(([value, activity]) => (
+          <option key={value} value={value}>{activity}</option>
+        ))}
+      </select>
+    </label>
+  </div>
+);
+
+// Workout type selector component
+const WorkoutTypeSelector = (): ReactNode => (
+  <div className="w-full max-w-xs">
+    <label className="form-control w-full">
+      <div className="label sr-only">
+        <span className="label-text">Workout type</span>
+      </div>
+      <select name="goalSelectMenu" className="select select-bordered w-full" required>
+        <option disabled selected>Workout type</option>
+        <option value="open">Open goal</option>
+        <option value="distance">Distance</option>
+        <option value="calories">Calories</option>
+        <option value="time">Time</option>
+        <option value="pacer">Pacer</option>
+        <option value="custom">Custom</option>
+      </select>
+    </label>
+  </div>
+);
+
+// Workout name input component
+const WorkoutNameInput = (): ReactNode => (
+  <div className="w-full max-w-xs">
+    <label className="form-control w-full">
+      <div className="label sr-only">
+        <span className="label-text">Name</span>
+      </div>
+      <input name="displayName" type="text" placeholder="Workout name" className="input input-bordered w-full" required />
+    </label>
+  </div>
+);
+
+// Submit button component
+const SubmitButton = ({ disabled = true }: { disabled?: boolean }): ReactNode => (
+  <div className="w-full max-w-xs">
+    <button type="submit" className={`btn btn-primary w-full ${disabled ? 'btn-disabled' : ''}`} disabled={disabled}>
+      Create workout
+    </button>
+  </div>
+);
+
 // Workout goal input components
-const DistanceGoalInput = () => (
+const DistanceGoalInput = (): ReactNode => (
   <div className="form-control w-full max-w-xs">
     <div className="flex items-center gap-2 mb-2">
       <input
-        name="distance"
+        name="targetValue"
         type="number"
         min={0}
         pattern="\d*"
         placeholder="Distance"
         className="input input-bordered w-full max-w-xs"
+        required
       />
     </div>
     <div className="flex flex-wrap gap-2">
       <label className="label cursor-pointer gap-1">
-        <input type="radio" name="unit" value={DistanceUnits.miles} className="radio radio-sm" />
+        <input
+          type="radio"
+          name="unit"
+          value={DistanceUnits.miles}
+          className="radio radio-sm"
+          required
+        />
         <span className="label-text">{DistanceUnits.miles}</span>
       </label>
       <label className="label cursor-pointer gap-1">
@@ -38,21 +103,29 @@ const DistanceGoalInput = () => (
   </div>
 );
 
-const EnergyGoalInput = () => (
+
+const EnergyGoalInput = (): ReactNode => (
   <div className="form-control w-full max-w-xs">
     <div className="flex items-center gap-2 mb-2">
       <input
-        name="energy"
+        name="targetValue"
         type="number"
         min={0}
         pattern="\d*"
         placeholder="Energy"
         className="input input-bordered w-full max-w-xs"
+        required
       />
     </div>
     <div className="flex flex-wrap gap-2">
       <label className="label cursor-pointer gap-1">
-        <input type="radio" name="unit" value={EnergyUnits.calories} className="radio radio-sm" />
+        <input
+          type="radio"
+          name="unit"
+          value={EnergyUnits.calories}
+          className="radio radio-sm"
+          required
+        />
         <span className="label-text">{EnergyUnits.calories}</span>
       </label>
       <label className="label cursor-pointer gap-1">
@@ -63,7 +136,8 @@ const EnergyGoalInput = () => (
   </div>
 );
 
-const TimeGoalInput = () => (
+
+const TimeGoalInput = (): ReactNode => (
   <div className="form-control w-full max-w-xs">
     <div className="flex items-center gap-2">
       <div className="flex flex-wrap gap-2">
@@ -75,6 +149,7 @@ const TimeGoalInput = () => (
           max={23}
           pattern="\d*"
           className="input input-bordered w-20"
+          data-time-input
         />
         <input
           placeholder={TimeUnits.minutes}
@@ -84,6 +159,7 @@ const TimeGoalInput = () => (
           max={59}
           pattern="\d*"
           className="input input-bordered w-20"
+          data-time-input
         />
         <input
           placeholder={TimeUnits.seconds}
@@ -93,13 +169,17 @@ const TimeGoalInput = () => (
           max={59}
           pattern="\d*"
           className="input input-bordered w-20"
+          data-time-input
         />
       </div>
+    </div>
+    <div className="mt-1 text-xs text-gray-500">
+      At least one time field is required
     </div>
   </div>
 );
 
-function WorkoutGoalInput({ type }: { type: WorkoutGoalTypes }) {
+function WorkoutGoalInput({ type }: { type: WorkoutGoalTypes }): ReactNode {
   switch (type) {
     case WorkoutGoalTypes.distance.toLowerCase():
       return <DistanceGoalInput />;
@@ -112,7 +192,7 @@ function WorkoutGoalInput({ type }: { type: WorkoutGoalTypes }) {
   }
 }
 
-function handleFormAction(state: Record<string, unknown>, event: { target: { name: string; value: string } }) {
+function handleFormAction(state: Record<string, unknown>, event: { target: { name: string; value: string } }): Record<string, unknown> {
   const { name, value } = event.target;
 
   if (name === "activity") {
@@ -128,14 +208,49 @@ function handleFormAction(state: Record<string, unknown>, event: { target: { nam
 }
 
 interface WorkoutActionResult {
+  displayName: WorkoutPlan["displayName"]
   success?: boolean
   blob?: Blob
   data?: string
 }
 
-export default function Form() {
+export default function WorkoutForm(): JSX.Element {
   const [formState, handleFormChange] = useActionState(handleFormAction, {});
   const [actionResult, setActionResult] = useState<WorkoutActionResult | null>(null);
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  // Ensure the form includes the proper unit values even when radios aren't clicked
+  useEffect(() => {
+    // This effect runs on component mount to update the form's hidden fields
+    // when the component is mounted
+    const handleFormMount = () => {
+      // Handle each goal type separately
+      switch (formState.goalSelectMenu) {
+        case 'distance':
+          // Ensure distance unit is set
+          const distanceRadio = document.querySelector('input[name="distanceUnit"]:checked') as HTMLInputElement;
+          if (!distanceRadio && document.querySelector('input[name="distanceUnit"]')) {
+            // No radio checked but they exist - select default
+            const defaultRadio = document.querySelector(`input[name="distanceUnit"][value="${DistanceUnits.miles}"]`) as HTMLInputElement;
+            if (defaultRadio) defaultRadio.checked = true;
+          }
+          break;
+
+        case 'calories':
+          // Ensure energy unit is set
+          const energyRadio = document.querySelector('input[name="energyUnit"]:checked') as HTMLInputElement;
+          if (!energyRadio && document.querySelector('input[name="energyUnit"]')) {
+            // No radio checked but they exist - select default
+            const defaultRadio = document.querySelector(`input[name="energyUnit"][value="${EnergyUnits.calories}"]`) as HTMLInputElement;
+            if (defaultRadio) defaultRadio.checked = true;
+          }
+          break;
+      }
+    };
+
+    // Run the handler when the component mounts and when form state changes
+    handleFormMount();
+  }, [formState.goalSelectMenu]);
 
   // Handle blob download when action returns a blob
   useEffect(() => {
@@ -143,7 +258,7 @@ export default function Form() {
       const url = window.URL.createObjectURL(actionResult.blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'workout-1.workout';
+      a.download = `${actionResult?.displayName}.workout`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -151,90 +266,94 @@ export default function Form() {
     }
   }, [actionResult]);
 
+  // Validate time inputs - at least one must have a value
+  useEffect(() => {
+    if (formState?.goalSelectMenu === 'time') {
+      const timeInputs = document.querySelectorAll('[data-time-input]');
+      let hasTimeValue = false;
+
+      timeInputs.forEach((input) => {
+        if ((input as HTMLInputElement).value) {
+          hasTimeValue = true;
+        }
+      });
+
+      // Add validation attribute to inputs based on whether any have values
+      timeInputs.forEach((input) => {
+        if (hasTimeValue) {
+          input.removeAttribute('required');
+        } else {
+          input.setAttribute('required', 'required');
+        }
+      });
+    }
+  }, [formState?.goalSelectMenu]);
+
+  // Check if the form is valid
+  const validateForm = () => {
+    const form = document.querySelector('form');
+    setIsFormValid(form ? form.checkValidity() : false);
+  };
+
   return (
     <Form
       className="w-full max-w-md mx-auto"
       action={async (formData) => {
+        // Handle radio buttons that are visually selected but not included in FormData
+        if (formState.goalSelectMenu === 'distance') {
+          const checkedRadio = document.querySelector('input[name="distanceUnit"]:checked') as HTMLInputElement;
+          if (checkedRadio && !formData.get('unit')) {
+            formData.append('distanceUnit', checkedRadio.value);
+          }
+        } else if (formState.goalSelectMenu === 'calories') {
+          const checkedRadio = document.querySelector('input[name="energyUnit"]:checked') as HTMLInputElement;
+          if (checkedRadio && !formData.get('energyUnit')) {
+            formData.append('energyUnit', checkedRadio.value);
+          }
+        }
+
         const result = await createWorkout(formData);
         setActionResult(result);
         return result;
       }}
-      onChange={handleFormChange}
+      onChange={(e) => {
+        // This is needed for TypeScript to recognize the correct type
+        if ('target' in e && e.target && 'name' in e.target && 'value' in e.target) {
+          // We need to cast to the expected type that handleFormAction accepts
+          handleFormChange(e as unknown as { target: { name: string; value: string } });
+
+          // Validate form after any change
+          setTimeout(validateForm, 0);
+        }
+      }}
+      onInvalid={() => {
+        setIsFormValid(false);
+      }}
     >
       <div className="flex flex-col items-center space-y-6">
-        <div className="w-full max-w-xs">
-          <label className="form-control w-full">
-            <div className="label sr-only">
-              <span className="label-text">Sport</span>
-            </div>
-            <select name="activityType" className="select select-bordered w-full">
-              <option disabled selected>Sport</option>
-              {activities().map(([value, activity]) => (
-                <option key={value} value={value}>{activity}</option>
-              ))}
-            </select>
-          </label>
-        </div>
+        {/* Sport selection is always shown */}
+        {SportSelector()}
 
-        {formState?.activityType !== 'swimBikeRun' && (
-          <div className="w-full max-w-xs">
-            <label className="form-control w-full">
-              <div className="label sr-only">
-                <span className="label-text">Workout type</span>
-              </div>
-              <select name="goalSelectMenu" className="select select-bordered w-full">
-                <option disabled selected>Workout type</option>
-                <option value="open">Open goal</option>
-                <option value="distance">Distance</option>
-                <option value="calories">Calories</option>
-                <option value="time">Time</option>
-                <option value="pacer">Pacer</option>
-                <option value="custom">Custom</option>
-              </select>
-            </label>
-          </div>
-        )}
+        {/* Only show workout type selector if a sport is selected */}
+        {formState?.activityType && formState.activityType !== 'swimBikeRun' ?
+          WorkoutTypeSelector() : null
+        }
 
-        {formState?.workoutType !== workoutType.swimBikeRunWorkout && (
+        {/* Only show goal inputs if workout type is selected */}
+        {formState?.activityType &&
+          formState?.goalSelectMenu &&
+          formState?.workoutType !== workoutType.swimBikeRunWorkout ? (
           <>
-            <div className="w-full max-w-xs">
-              <label className="form-control w-full">
-                <div className="label sr-only">
-                  <span className="label-text">Goal</span>
-                </div>
-                <select name="goal" className="select select-bordered w-full">
-                  <option disabled selected>Goal</option>
-                  {workoutGoals().map(([value, activity]) => (
-                    <option key={value} value={value}>{activity}</option>
-                  ))}
-                </select>
-              </label>
-            </div>
-            <div className="w-full max-w-xs">
-              <WorkoutGoalInput type={formState?.goal as WorkoutGoalTypes} />
-            </div>
-            <div className="w-full max-w-xs">
-              <label className="form-control w-full">
-                <div className="label sr-only">
-                  <span className="label-text">Name</span>
-                </div>
-                <input name="displayName" type="text" placeholder="Name" className="input input-bordered w-full" />
-              </label>
-            </div>
-            <div className="w-full max-w-xs">
-              <label className="form-control w-full">
-                <div className="label sr-only">
-                  <span className="label-text">Author</span>
-                </div>
-                <input name="author" type="text" placeholder="Author" className="input input-bordered w-full" />
-              </label>
-            </div>
-          </>
-        )}
+            {/* Show specific goal input based on goalSelectMenu value */}
+            {formState.goalSelectMenu === 'distance' && <DistanceGoalInput />}
+            {formState.goalSelectMenu === 'calories' && <EnergyGoalInput />}
+            {formState.goalSelectMenu === 'time' && <TimeGoalInput />}
 
-        <div className="w-full max-w-xs">
-          <button className="btn btn-primary w-full">Create workout</button>
-        </div>
+            {WorkoutNameInput()}
+          </>
+        ) : null}
+
+        {SubmitButton({ disabled: !isFormValid })}
       </div>
     </Form>
   )

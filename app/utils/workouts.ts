@@ -48,23 +48,13 @@ export interface OpenWorkoutGoal {
   type: WorkoutGoalTypes.open
 }
 
-export interface DistanceWorkoutGoal {
-  type: WorkoutGoalTypes.distance
-  distance: number
-  unit: DistanceUnits
+export interface GoalWithTargetValue {
+  type: WorkoutGoalTypes
+  targetValue?: number
+  targetDurantion?: number
+  unit: DistanceUnits | TimeUnits
 }
 
-export interface EnergyWorkoutGoal {
-  type: WorkoutGoalTypes.energy
-  amount: number
-  unit: EnergyUnits
-}
-
-export interface TimeWorkoutGoal {
-  type: WorkoutGoalTypes.time
-  duration: number
-  unit: TimeUnits
-}
 
 export enum workoutType {
   singleGoalWorkout = 'singleGoalWorkout',
@@ -140,19 +130,19 @@ export function workoutGoals() {
 
 export interface WorkoutPlan {
   workoutType: workoutType
-  activity: HKWorkoutActivityType
+  activityType: HKWorkoutActivityType
   location: 'indoor' | 'outdoor'
   displayName: string
   swimmingLocation: 'indoors'
-  goal?: OpenWorkoutGoal | TimeWorkoutGoal | EnergyWorkoutGoal | DistanceWorkoutGoal
+  goal?: OpenWorkoutGoal | GoalWithTargetValue
   warmup?: {
     alert: HeartRateRangeAlert | HeartRateZoneAlert | CadenceRangeAlert,
-    goal: OpenWorkoutGoal | TimeWorkoutGoal | EnergyWorkoutGoal | DistanceWorkoutGoal,
+    goal: OpenWorkoutGoal | GoalWithTargetValue,
   },
   blocks?: IntervalBlock[],
   cooldown?: {
     alert: HeartRateRangeAlert | HeartRateZoneAlert | CadenceRangeAlert
-    goal: OpenWorkoutGoal | TimeWorkoutGoal | EnergyWorkoutGoal | DistanceWorkoutGoal
+    goal: OpenWorkoutGoal | GoalWithTargetValue
   }
 }
 

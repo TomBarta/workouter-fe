@@ -1,8 +1,11 @@
-import { HKWorkoutActivityType, WorkoutGoalTypes, WorkoutPlan, workoutType } from "../utils/workouts"
+import { WorkoutGoalTypes, WorkoutPlan, workoutType } from "../utils/workouts"
 
 export interface Payload extends WorkoutPlan {
     swimmingLocation: 'indoors'
     goalSelectMenu?: string
+    hrs?: number
+    min?: number
+    sec?: number
 }
 
 export function setWorkoutType(goalSelectMenu: string | undefined) {
@@ -20,15 +23,18 @@ export function setWorkoutType(goalSelectMenu: string | undefined) {
     return workoutType.singleGoalWorkout
 }
 
-export function setGoal(goalSelectMenu: string | undefined): WorkoutPlan['goal'] {
+export function setGoal(payload: Payload): WorkoutPlan['goal'] {
+    const { goalSelectMenu, unit, targetValue } = payload
     switch (goalSelectMenu) {
         case 'distance':
-            return { type: WorkoutGoalTypes.distance }
+            return { type: WorkoutGoalTypes.distance, targetValue, unit }
         case 'time':
-            return { type: WorkoutGoalTypes.time }
+            const { hrs = 0, min = 0, sec = 0 } = payload
+            const timeInSeconds = (hrs * 3600) + (min * 60) + sec
+            return { type: WorkoutGoalTypes.time, unit: 'seconds', targetDuration: timeInSeconds }
         case 'energy':
         case 'calories':
-            return { type: WorkoutGoalTypes.energy }
+            return { type: WorkoutGoalTypes.energy, unit, targetValue }
         case 'open':
             return { type: WorkoutGoalTypes.open }
     }

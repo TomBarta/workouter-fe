@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+scratch_pad.md
 
 # debug
 npm-debug.log*

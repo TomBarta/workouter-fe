@@ -3,6 +3,7 @@
 import WorkoutForm from '@/app/landing/form';
 
 export default function Page() {
+
   return (
     <main>
       <section className="bg-base-200 min-h-screen flex flex-col">

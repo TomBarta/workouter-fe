@@ -81,9 +81,10 @@ const DistanceGoalInput = (): ReactNode => (
         <input
           type="radio"
           name="unit"
-          value={DistanceUnits.miles}
           className="radio radio-sm"
           required
+          defaultValue={DistanceUnits.miles}
+          defaultChecked
         />
         <span className="label-text">{DistanceUnits.miles}</span>
       </label>
@@ -122,7 +123,8 @@ const EnergyGoalInput = (): ReactNode => (
         <input
           type="radio"
           name="unit"
-          value={EnergyUnits.calories}
+          defaultValue={EnergyUnits.calories}
+          defaultChecked
           className="radio radio-sm"
           required
         />
@@ -179,19 +181,6 @@ const TimeGoalInput = (): ReactNode => (
   </div>
 );
 
-function WorkoutGoalInput({ type }: { type: WorkoutGoalTypes }): ReactNode {
-  switch (type) {
-    case WorkoutGoalTypes.distance.toLowerCase():
-      return <DistanceGoalInput />;
-    case WorkoutGoalTypes.energy.toLowerCase():
-      return <EnergyGoalInput />;
-    case WorkoutGoalTypes.time.toLowerCase():
-      return <TimeGoalInput />;
-    default:
-      return null;
-  }
-}
-
 function handleFormAction(state: Record<string, unknown>, event: { target: { name: string; value: string } }): Record<string, unknown> {
   const { name, value } = event.target;
 
@@ -218,39 +207,6 @@ export default function WorkoutForm(): JSX.Element {
   const [formState, handleFormChange] = useActionState(handleFormAction, {});
   const [actionResult, setActionResult] = useState<WorkoutActionResult | null>(null);
   const [isFormValid, setIsFormValid] = useState(false);
-
-  // Ensure the form includes the proper unit values even when radios aren't clicked
-  useEffect(() => {
-    // This effect runs on component mount to update the form's hidden fields
-    // when the component is mounted
-    const handleFormMount = () => {
-      // Handle each goal type separately
-      switch (formState.goalSelectMenu) {
-        case 'distance':
-          // Ensure distance unit is set
-          const distanceRadio = document.querySelector('input[name="distanceUnit"]:checked') as HTMLInputElement;
-          if (!distanceRadio && document.querySelector('input[name="distanceUnit"]')) {
-            // No radio checked but they exist - select default
-            const defaultRadio = document.querySelector(`input[name="distanceUnit"][value="${DistanceUnits.miles}"]`) as HTMLInputElement;
-            if (defaultRadio) defaultRadio.checked = true;
-          }
-          break;
-
-        case 'calories':
-          // Ensure energy unit is set
-          const energyRadio = document.querySelector('input[name="energyUnit"]:checked') as HTMLInputElement;
-          if (!energyRadio && document.querySelector('input[name="energyUnit"]')) {
-            // No radio checked but they exist - select default
-            const defaultRadio = document.querySelector(`input[name="energyUnit"][value="${EnergyUnits.calories}"]`) as HTMLInputElement;
-            if (defaultRadio) defaultRadio.checked = true;
-          }
-          break;
-      }
-    };
-
-    // Run the handler when the component mounts and when form state changes
-    handleFormMount();
-  }, [formState.goalSelectMenu]);
 
   // Handle blob download when action returns a blob
   useEffect(() => {
@@ -287,7 +243,7 @@ export default function WorkoutForm(): JSX.Element {
         }
       });
     }
-  }, [formState?.goalSelectMenu]);
+  }, [formState?.goalSelectMenu, formState?.[TimeUnits.hours], formState?.[TimeUnits.minutes], formState?.[TimeUnits.seconds]]);
 
   // Check if the form is valid
   const validateForm = () => {
@@ -299,19 +255,6 @@ export default function WorkoutForm(): JSX.Element {
     <Form
       className="w-full max-w-md mx-auto"
       action={async (formData) => {
-        // Handle radio buttons that are visually selected but not included in FormData
-        if (formState.goalSelectMenu === 'distance') {
-          const checkedRadio = document.querySelector('input[name="distanceUnit"]:checked') as HTMLInputElement;
-          if (checkedRadio && !formData.get('unit')) {
-            formData.append('distanceUnit', checkedRadio.value);
-          }
-        } else if (formState.goalSelectMenu === 'calories') {
-          const checkedRadio = document.querySelector('input[name="energyUnit"]:checked') as HTMLInputElement;
-          if (checkedRadio && !formData.get('energyUnit')) {
-            formData.append('energyUnit', checkedRadio.value);
-          }
-        }
-
         const result = await createWorkout(formData);
         setActionResult(result);
         return result;

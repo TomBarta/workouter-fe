@@ -82,7 +82,7 @@ describe('page action helper functions', () => {
       // Should contain all the expected properties
       expect(result).toEqual(expect.objectContaining({
         workoutType: input.workoutType,
-        activity: input.activity,
+        activityType: input.activityType,
         location: input.location,
         displayName: input.displayName,
         swimmingLocation: 'indoors'
@@ -101,7 +101,7 @@ describe('page action helper functions', () => {
       // Should contain all the expected properties
       expect(result).toEqual(expect.objectContaining({
         workoutType: input.workoutType,
-        activity: input.activity,
+        activityType: input.activityType,
         location: input.location,
         displayName: input.displayName,
         swimmingLocation: 'indoors'

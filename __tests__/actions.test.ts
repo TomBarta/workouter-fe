@@ -1,5 +1,5 @@
 import { cleanUpPayload, Payload, setGoal, setWorkoutType } from '@/app/lib/pageActionUtils'
-import { DistanceUnits, HKWorkoutActivityType, WorkoutGoalTypes, workoutType } from '@/app/utils/workouts'
+import { DistanceUnits, EnergyUnits, HKWorkoutActivityType, TimeUnits, WorkoutGoalTypes, workoutType } from '@/app/utils/workouts'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 describe('page action helper functions', () => {
@@ -45,20 +45,59 @@ describe('page action helper functions', () => {
       ['', { type: WorkoutGoalTypes.open }],
       ['invalid', { type: WorkoutGoalTypes.open }],
     ])('setGoal(%s) should return goal with type %s', (arg, expected) => {
-      expect(setGoal(arg as string | undefined)).toMatchObject(expected);
+      const payload = { ...testPayload, goalSelectMenu: arg as string | undefined };
+      expect(setGoal(payload)).toMatchObject(expected);
     });
     
     test('returns goal objects with correct structure', () => {
       // Check that the returned objects have the correct structure
-      const openGoal = setGoal('open');
-      const distanceGoal = setGoal('distance');
-      const timeGoal = setGoal('time');
-      const energyGoal = setGoal('calories');
+      const openGoal = setGoal({ ...testPayload, goalSelectMenu: 'open' });
+      const distanceGoal = setGoal({ ...testPayload, goalSelectMenu: 'distance', targetValue: 5, unit: DistanceUnits.kilometers });
+      const timeGoal = setGoal({ ...testPayload, goalSelectMenu: 'time', hrs: 1, min: 30, sec: 15 });
+      const energyGoal = setGoal({ ...testPayload, goalSelectMenu: 'calories', targetValue: 500, unit: EnergyUnits.calories });
       
       expect(openGoal).toHaveProperty('type', WorkoutGoalTypes.open);
       expect(distanceGoal).toHaveProperty('type', WorkoutGoalTypes.distance);
+      expect(distanceGoal).toHaveProperty('targetValue', 5);
+      expect(distanceGoal).toHaveProperty('unit', DistanceUnits.kilometers);
       expect(timeGoal).toHaveProperty('type', WorkoutGoalTypes.time);
+      expect(timeGoal).toHaveProperty('targetDuration', 5415); // 1h30m15s = 5415 seconds
+      expect(timeGoal).toHaveProperty('unit', 'seconds');
       expect(energyGoal).toHaveProperty('type', WorkoutGoalTypes.energy);
+      expect(energyGoal).toHaveProperty('targetValue', 500);
+      expect(energyGoal).toHaveProperty('unit', EnergyUnits.calories);
+    });
+
+    test('handles time-based goals correctly', () => {
+      // Test various time combinations
+      const timeGoal1 = setGoal({ ...testPayload, goalSelectMenu: 'time', hrs: 1, min: 0, sec: 0 });
+      const timeGoal2 = setGoal({ ...testPayload, goalSelectMenu: 'time', min: 30, sec: 0 });
+      const timeGoal3 = setGoal({ ...testPayload, goalSelectMenu: 'time', sec: 45 });
+      const timeGoal4 = setGoal({ ...testPayload, goalSelectMenu: 'time' }); // No time specified
+      
+      expect(timeGoal1).toEqual({ 
+        type: WorkoutGoalTypes.time, 
+        unit: 'seconds', 
+        targetDuration: 3600 // 1 hour
+      });
+      
+      expect(timeGoal2).toEqual({ 
+        type: WorkoutGoalTypes.time, 
+        unit: 'seconds', 
+        targetDuration: 1800 // 30 minutes
+      });
+      
+      expect(timeGoal3).toEqual({ 
+        type: WorkoutGoalTypes.time, 
+        unit: 'seconds', 
+        targetDuration: 45 // 45 seconds
+      });
+      
+      expect(timeGoal4).toEqual({ 
+        type: WorkoutGoalTypes.time, 
+        unit: 'seconds', 
+        targetDuration: 0 // No time specified
+      });
     });
   });
 

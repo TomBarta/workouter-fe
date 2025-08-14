@@ -51,7 +51,7 @@ export interface OpenWorkoutGoal {
 export interface GoalWithTargetValue {
   type: WorkoutGoalTypes
   targetValue?: number
-  targetDurantion?: number
+  targetDuration?: number
   unit: DistanceUnits | TimeUnits
 }
 

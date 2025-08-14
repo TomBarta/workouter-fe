@@ -30,7 +30,12 @@ export function setGoal(payload: Payload): WorkoutPlan['goal'] {
             return { type: WorkoutGoalTypes.distance, targetValue, unit }
         case 'time':
             const { hrs = 0, min = 0, sec = 0 } = payload
-            const timeInSeconds = (hrs * 3600) + (min * 60) + sec
+            // Convert string values to numbers if needed
+            const hoursNum = typeof hrs === 'string' ? parseInt(hrs) : (hrs || 0)
+            const minsNum = typeof min === 'string' ? parseInt(min) : (min || 0)
+            const secsNum = typeof sec === 'string' ? parseInt(sec) : (sec || 0)
+            
+            const timeInSeconds = (hoursNum * 3600) + (minsNum * 60) + secsNum
             return { type: WorkoutGoalTypes.time, unit: 'seconds', targetDuration: timeInSeconds }
         case 'energy':
         case 'calories':

@@ -64,7 +64,7 @@ describe('createWorkout', () => {
     const result = await createWorkout(mockFormData)
     
     // Check that the response was processed correctly
-    expect(result).toEqual({ success: true, blob: mockBlob })
+    expect(result).toEqual({ displayName: 'Test Workout', success: true, blob: mockBlob })
   })
   
   test('should handle text response', async () => {
@@ -162,5 +162,60 @@ describe('createWorkout', () => {
       activityType: 'running',
       location: 'outdoor'
     }))
+  })
+  
+  test('should correctly handle time-based workout creation', async () => {
+    // Set up form data for a time-based workout
+    const timeFormData = new FormData()
+    timeFormData.append('displayName', 'Time Workout')
+    timeFormData.append('activityType', 'running')
+    timeFormData.append('location', 'indoor')
+    timeFormData.append('goalSelectMenu', 'time')
+    timeFormData.append('hrs', '0')
+    timeFormData.append('min', '45')
+    timeFormData.append('sec', '30')
+    
+    // Mock successful response
+    const mockResponse = {
+      ok: true,
+      headers: {
+        get: vi.fn().mockReturnValue('application/json')
+      },
+      json: vi.fn().mockResolvedValue({ id: '123', success: true })
+    }
+    
+    global.fetch = vi.fn().mockResolvedValue(mockResponse)
+    
+    await createWorkout(timeFormData)
+    
+    // Check that fetch was called with correctly serialized JSON
+    expect(fetch).toHaveBeenCalledWith('http://127.0.0.1:8080/workout', expect.objectContaining({
+      method: 'POST',
+      headers: expect.objectContaining({
+        'Content-Type': 'application/json',
+      }),
+      body: expect.stringContaining('"displayName":"Time Workout"')
+    }))
+    
+    // Parse the body to verify the workout was formatted correctly
+    const callArgs = (fetch as any).mock.calls[0][1]
+    const bodyObj = JSON.parse(callArgs.body)
+    
+    expect(bodyObj).toEqual(expect.objectContaining({
+      displayName: 'Time Workout',
+      activityType: 'running',
+      location: 'indoor',
+      workoutType: 'singleGoalWorkout'
+    }))
+    
+    // Verify the goal was set correctly
+    expect(bodyObj).toHaveProperty('goal')
+    expect(bodyObj.goal).toEqual(expect.objectContaining({
+      type: 'time',
+      unit: 'seconds'
+    }))
+    
+    // The goal should have targetDuration property with the correct value
+    expect(bodyObj.goal).toHaveProperty('targetDuration')
   })
 })

@@ -139,20 +139,22 @@ const EnergyGoalInput = (): ReactNode => (
 );
 
 
-const TimeGoalInput = (): ReactNode => (
+const TimeGoalInput = ({ showHours = true }: { showHours?: boolean } = {}): ReactNode => (
   <div className="form-control w-full max-w-xs">
     <div className="flex items-center gap-2">
       <div className="flex flex-wrap gap-2">
-        <input
-          placeholder={TimeUnits.hours}
-          name={TimeUnits.hours}
-          type="number"
-          min={0}
-          max={23}
-          pattern="\d*"
-          className="input input-bordered w-20"
-          data-time-input
-        />
+        {showHours && (
+          <input
+            placeholder={TimeUnits.hours}
+            name={TimeUnits.hours}
+            type="number"
+            min={0}
+            max={23}
+            pattern="\d*"
+            className="input input-bordered w-20"
+            data-time-input
+          />
+        )}
         <input
           placeholder={TimeUnits.minutes}
           name={TimeUnits.minutes}
@@ -266,7 +268,7 @@ const IntervalStep = ({ stepIndex, onAddStep }: { stepIndex: number, onAddStep: 
           <label className="label">
             <span className="label-text">Recovery Duration</span>
           </label>
-          <TimeGoalInput />
+          <TimeGoalInput showHours={false} />
         </div>
       )}
 

@@ -63,134 +63,150 @@ const SubmitButton = ({ disabled = true }: { disabled?: boolean }): ReactNode =>
 );
 
 // Workout goal input components
-const DistanceGoalInput = (): ReactNode => (
-  <div className="form-control w-full max-w-xs">
-    <div className="flex items-center gap-2 mb-2">
-      <input
-        name="targetValue"
-        type="number"
-        min={0}
-        pattern="\d*"
-        placeholder="Distance"
-        className="input input-bordered w-full max-w-xs"
-        required
-      />
-    </div>
-    <div className="flex flex-wrap gap-2">
-      <label className="label cursor-pointer gap-1">
+const DistanceGoalInput = ({ stepIndex }: { stepIndex?: number } = {}): ReactNode => {
+  const unitName = stepIndex !== undefined ? `step-${stepIndex}-unit` : 'unit';
+  const targetValueName = stepIndex !== undefined ? `step-${stepIndex}-targetValue` : 'targetValue';
+  
+  return (
+    <div className="form-control w-full max-w-xs">
+      <div className="flex items-center gap-2 mb-2">
         <input
-          type="radio"
-          name="unit"
-          className="radio radio-sm"
-          required
-          defaultValue={DistanceUnits.miles}
-          defaultChecked
-        />
-        <span className="label-text">{DistanceUnits.miles}</span>
-      </label>
-      <label className="label cursor-pointer gap-1">
-        <input type="radio" name="unit" value={DistanceUnits.kilometers} className="radio radio-sm" />
-        <span className="label-text">{DistanceUnits.kilometers}</span>
-      </label>
-      <label className="label cursor-pointer gap-1">
-        <input type="radio" name="unit" value={DistanceUnits.yards} className="radio radio-sm" />
-        <span className="label-text">{DistanceUnits.yards}</span>
-      </label>
-      <label className="label cursor-pointer gap-1">
-        <input type="radio" name="unit" value={DistanceUnits.meters} className="radio radio-sm" />
-        <span className="label-text">{DistanceUnits.meters}</span>
-      </label>
-    </div>
-  </div>
-);
-
-
-const EnergyGoalInput = (): ReactNode => (
-  <div className="form-control w-full max-w-xs">
-    <div className="flex items-center gap-2 mb-2">
-      <input
-        name="targetValue"
-        type="number"
-        min={0}
-        pattern="\d*"
-        placeholder="Energy"
-        className="input input-bordered w-full max-w-xs"
-        required
-      />
-    </div>
-    <div className="flex flex-wrap gap-2">
-      <label className="label cursor-pointer gap-1">
-        <input
-          type="radio"
-          name="unit"
-          defaultValue={EnergyUnits.calories}
-          defaultChecked
-          className="radio radio-sm"
+          name={targetValueName}
+          type="number"
+          min={0}
+          pattern="\d*"
+          placeholder="Distance"
+          className="input input-bordered w-full max-w-xs"
           required
         />
-        <span className="label-text">{EnergyUnits.calories}</span>
-      </label>
-      <label className="label cursor-pointer gap-1">
-        <input type="radio" name="unit" value={EnergyUnits.kilocalories} className="radio radio-sm" />
-        <span className="label-text">{EnergyUnits.kilocalories}</span>
-      </label>
-    </div>
-  </div>
-);
-
-
-const TimeGoalInput = ({ showHours = true }: { showHours?: boolean } = {}): ReactNode => (
-  <div className="form-control w-full max-w-xs">
-    <div className="flex items-center gap-2">
+      </div>
       <div className="flex flex-wrap gap-2">
-        {showHours && (
+        <label className="label cursor-pointer gap-1">
+          <input
+            type="radio"
+            name={unitName}
+            className="radio radio-sm"
+            required
+            defaultValue={DistanceUnits.miles}
+            defaultChecked
+          />
+          <span className="label-text">{DistanceUnits.miles}</span>
+        </label>
+        <label className="label cursor-pointer gap-1">
+          <input type="radio" name={unitName} value={DistanceUnits.kilometers} className="radio radio-sm" />
+          <span className="label-text">{DistanceUnits.kilometers}</span>
+        </label>
+        <label className="label cursor-pointer gap-1">
+          <input type="radio" name={unitName} value={DistanceUnits.yards} className="radio radio-sm" />
+          <span className="label-text">{DistanceUnits.yards}</span>
+        </label>
+        <label className="label cursor-pointer gap-1">
+          <input type="radio" name={unitName} value={DistanceUnits.meters} className="radio radio-sm" />
+          <span className="label-text">{DistanceUnits.meters}</span>
+        </label>
+      </div>
+    </div>
+  );
+};
+
+
+const EnergyGoalInput = ({ stepIndex }: { stepIndex?: number } = {}): ReactNode => {
+  const unitName = stepIndex !== undefined ? `step-${stepIndex}-unit` : 'unit';
+  const targetValueName = stepIndex !== undefined ? `step-${stepIndex}-targetValue` : 'targetValue';
+  
+  return (
+    <div className="form-control w-full max-w-xs">
+      <div className="flex items-center gap-2 mb-2">
+        <input
+          name={targetValueName}
+          type="number"
+          min={0}
+          pattern="\d*"
+          placeholder="Energy"
+          className="input input-bordered w-full max-w-xs"
+          required
+        />
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <label className="label cursor-pointer gap-1">
+          <input
+            type="radio"
+            name={unitName}
+            defaultValue={EnergyUnits.calories}
+            defaultChecked
+            className="radio radio-sm"
+            required
+          />
+          <span className="label-text">{EnergyUnits.calories}</span>
+        </label>
+        <label className="label cursor-pointer gap-1">
+          <input type="radio" name={unitName} value={EnergyUnits.kilocalories} className="radio radio-sm" />
+          <span className="label-text">{EnergyUnits.kilocalories}</span>
+        </label>
+      </div>
+    </div>
+  );
+};
+
+
+const TimeGoalInput = ({ showHours = true, stepIndex }: { showHours?: boolean, stepIndex?: number } = {}): ReactNode => {
+  const hoursName = stepIndex !== undefined ? `step-${stepIndex}-${TimeUnits.hours}` : TimeUnits.hours;
+  const minutesName = stepIndex !== undefined ? `step-${stepIndex}-${TimeUnits.minutes}` : TimeUnits.minutes;
+  const secondsName = stepIndex !== undefined ? `step-${stepIndex}-${TimeUnits.seconds}` : TimeUnits.seconds;
+  
+  return (
+    <div className="form-control w-full max-w-xs">
+      <div className="flex items-center gap-2">
+        <div className="flex flex-wrap gap-2">
+          {showHours && (
+            <div className="flex flex-col items-center">
+              <input
+                placeholder="0"
+                name={hoursName}
+                type="number"
+                min={0}
+                max={23}
+                pattern="\d*"
+                className="input input-bordered w-20"
+                data-time-input
+              />
+              <label className="text-xs text-gray-500 mt-1">hours</label>
+            </div>
+          )}
           <div className="flex flex-col items-center">
             <input
               placeholder="0"
-              name={TimeUnits.hours}
+              name={minutesName}
               type="number"
               min={0}
-              max={23}
+              max={59}
               pattern="\d*"
               className="input input-bordered w-20"
               data-time-input
             />
-            <label className="text-xs text-gray-500 mt-1">hours</label>
+            <label className="text-xs text-gray-500 mt-1">minutes</label>
           </div>
-        )}
-        <div className="flex flex-col items-center">
-          <input
-            placeholder="0"
-            name={TimeUnits.minutes}
-            type="number"
-            min={0}
-            max={59}
-            pattern="\d*"
-            className="input input-bordered w-20"
-            data-time-input
-          />
-          <label className="text-xs text-gray-500 mt-1">minutes</label>
-        </div>
-        <div className="flex flex-col items-center">
-          <input
-            placeholder="0"
-            name={TimeUnits.seconds}
-            type="number"
-            min={0}
-            max={59}
-            pattern="\d*"
-            className="input input-bordered w-20"
-            data-time-input
-          />
-          <label className="text-xs text-gray-500 mt-1">seconds</label>
+          <div className="flex flex-col items-center">
+            <input
+              placeholder="0"
+              name={secondsName}
+              type="number"
+              min={0}
+              max={59}
+              pattern="\d*"
+              className="input input-bordered w-20"
+              data-time-input
+            />
+            <label className="text-xs text-gray-500 mt-1">seconds</label>
+          </div>
         </div>
       </div>
+      <div className="mt-1 text-xs text-gray-500">
+        At least one time field is required
+      </div>
     </div>
-    <div className="mt-1 text-xs text-gray-500">
-      At least one time field is required
-    </div>
-  </div>
-);
+  );
+};
 
 // IntervalStep component for custom workouts
 const IntervalStep = ({ stepIndex, onAddStep, onRemove, canRemove }: { 
@@ -284,17 +300,17 @@ const IntervalStep = ({ stepIndex, onAddStep, onRemove, canRemove }: {
           {/* Render goal input based on selected goal type */}
           {goalType === 'distance' && (
             <div className="mb-4">
-              <DistanceGoalInput />
+              <DistanceGoalInput stepIndex={stepIndex} />
             </div>
           )}
           {goalType === 'calories' && (
             <div className="mb-4">
-              <EnergyGoalInput />
+              <EnergyGoalInput stepIndex={stepIndex} />
             </div>
           )}
           {goalType === 'time' && (
             <div className="mb-4">
-              <TimeGoalInput />
+              <TimeGoalInput stepIndex={stepIndex} />
             </div>
           )}
         </>
@@ -306,7 +322,7 @@ const IntervalStep = ({ stepIndex, onAddStep, onRemove, canRemove }: {
           <label className="label">
             <span className="label-text">Recovery Duration</span>
           </label>
-          <TimeGoalInput showHours={false} />
+          <TimeGoalInput showHours={false} stepIndex={stepIndex} />
         </div>
       )}
 

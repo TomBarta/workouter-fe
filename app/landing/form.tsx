@@ -301,7 +301,7 @@ export default function WorkoutForm(): JSX.Element {
             {formState.goalSelectMenu === 'distance' && <DistanceGoalInput />}
             {formState.goalSelectMenu === 'calories' && <EnergyGoalInput />}
             {formState.goalSelectMenu === 'time' && <TimeGoalInput />}
-            {formState.goalSelectMenu === 'custom' && <TimeGoalInput />}
+            {formState.goalSelectMenu === 'custom' && <CustomGoalInput />}
 
             {WorkoutNameInput()}
           </>

@@ -202,8 +202,20 @@ const IntervalStep = ({ stepIndex, onAddStep, onRemove, canRemove }: {
   const [purpose, setPurpose] = useState<'work' | 'recovery'>('work');
   const [goalType, setGoalType] = useState<string>('');
 
+  const isRecovery = purpose === 'recovery';
+  const stepTitle = isRecovery ? `Recovery - ${stepIndex + 1}` : `Step ${stepIndex + 1}`;
+
   return (
-    <div className="border border-gray-300 rounded-lg p-4 mb-4 relative">
+    <div className={`border rounded-lg p-4 mb-4 relative ${
+      isRecovery 
+        ? 'border-blue-300 bg-blue-50 ml-4 border-l-4 border-l-blue-500' 
+        : 'border-gray-300'
+    }`}>
+      {/* Visual connector line for recovery steps */}
+      {isRecovery && stepIndex > 0 && (
+        <div className="absolute -top-4 left-2 w-0.5 h-4 bg-blue-500"></div>
+      )}
+      
       {canRemove && (
         <button
           type="button"
@@ -214,7 +226,9 @@ const IntervalStep = ({ stepIndex, onAddStep, onRemove, canRemove }: {
           ×
         </button>
       )}
-      <h4 className="font-semibold mb-3">Step {stepIndex + 1}</h4>
+      <h4 className={`font-semibold mb-3 ${isRecovery ? 'text-blue-700' : ''}`}>
+        {stepTitle}
+      </h4>
 
       {/* Purpose selector */}
       <div className="form-control w-full max-w-xs mb-4">

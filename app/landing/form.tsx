@@ -193,12 +193,27 @@ const TimeGoalInput = ({ showHours = true }: { showHours?: boolean } = {}): Reac
 );
 
 // IntervalStep component for custom workouts
-const IntervalStep = ({ stepIndex, onAddStep }: { stepIndex: number, onAddStep: () => void }): ReactNode => {
+const IntervalStep = ({ stepIndex, onAddStep, onRemove, canRemove }: { 
+  stepIndex: number, 
+  onAddStep: () => void,
+  onRemove: () => void,
+  canRemove: boolean
+}): ReactNode => {
   const [purpose, setPurpose] = useState<'work' | 'recovery'>('work');
   const [goalType, setGoalType] = useState<string>('');
 
   return (
-    <div className="border border-gray-300 rounded-lg p-4 mb-4">
+    <div className="border border-gray-300 rounded-lg p-4 mb-4 relative">
+      {canRemove && (
+        <button
+          type="button"
+          onClick={onRemove}
+          className="absolute top-2 right-2 btn btn-ghost btn-xs text-gray-500 hover:text-red-500"
+          aria-label="Remove step"
+        >
+          ×
+        </button>
+      )}
       <h4 className="font-semibold mb-3">Step {stepIndex + 1}</h4>
 
       {/* Purpose selector */}
@@ -302,16 +317,22 @@ const CustomGoalInput = (): ReactNode => {
     setSteps(prev => [...prev, prev.length]);
   };
 
+  const removeStep = (indexToRemove: number) => {
+    setSteps(prev => prev.filter((_, index) => index !== indexToRemove));
+  };
+
   return (
     <div className="form-control w-full max-w-xs">
       <div className="py-4 bg-gray-100 rounded-lg">
         <h3 className="font-semibold mb-4">Custom Workout Builder</h3>
 
-        {steps.map((stepIndex) => (
+        {steps.map((stepIndex, arrayIndex) => (
           <IntervalStep
             key={stepIndex}
-            stepIndex={stepIndex}
+            stepIndex={arrayIndex}
             onAddStep={addStep}
+            onRemove={() => removeStep(arrayIndex)}
+            canRemove={steps.length > 1}
           />
         ))}
       </div>

@@ -144,37 +144,46 @@ const TimeGoalInput = ({ showHours = true }: { showHours?: boolean } = {}): Reac
     <div className="flex items-center gap-2">
       <div className="flex flex-wrap gap-2">
         {showHours && (
+          <div className="flex flex-col items-center">
+            <input
+              placeholder="0"
+              name={TimeUnits.hours}
+              type="number"
+              min={0}
+              max={23}
+              pattern="\d*"
+              className="input input-bordered w-20"
+              data-time-input
+            />
+            <label className="text-xs text-gray-500 mt-1">hours</label>
+          </div>
+        )}
+        <div className="flex flex-col items-center">
           <input
-            placeholder={TimeUnits.hours}
-            name={TimeUnits.hours}
+            placeholder="0"
+            name={TimeUnits.minutes}
             type="number"
             min={0}
-            max={23}
+            max={59}
             pattern="\d*"
             className="input input-bordered w-20"
             data-time-input
           />
-        )}
-        <input
-          placeholder={TimeUnits.minutes}
-          name={TimeUnits.minutes}
-          type="number"
-          min={0}
-          max={59}
-          pattern="\d*"
-          className="input input-bordered w-20"
-          data-time-input
-        />
-        <input
-          placeholder={TimeUnits.seconds}
-          name={TimeUnits.seconds}
-          type="number"
-          min={0}
-          max={59}
-          pattern="\d*"
-          className="input input-bordered w-20"
-          data-time-input
-        />
+          <label className="text-xs text-gray-500 mt-1">minutes</label>
+        </div>
+        <div className="flex flex-col items-center">
+          <input
+            placeholder="0"
+            name={TimeUnits.seconds}
+            type="number"
+            min={0}
+            max={59}
+            pattern="\d*"
+            className="input input-bordered w-20"
+            data-time-input
+          />
+          <label className="text-xs text-gray-500 mt-1">seconds</label>
+        </div>
       </div>
     </div>
     <div className="mt-1 text-xs text-gray-500">

@@ -220,7 +220,6 @@ const IntervalStep = ({ stepIndex, onAddStep }: { stepIndex: number, onAddStep: 
               name={`step-${stepIndex}-goal-type`}
             >
               <option value="">Select goal</option>
-              <option value="open">Open</option>
               <option value="distance">Distance</option>
               <option value="calories">Calories</option>
               <option value="time">Time</option>
@@ -241,11 +240,6 @@ const IntervalStep = ({ stepIndex, onAddStep }: { stepIndex: number, onAddStep: 
           {goalType === 'time' && (
             <div className="mb-4">
               <TimeGoalInput />
-            </div>
-          )}
-          {goalType === 'open' && (
-            <div className="mb-4 p-2 bg-gray-50 rounded">
-              <span className="text-sm text-gray-600">Open goal - no specific target</span>
             </div>
           )}
         </>

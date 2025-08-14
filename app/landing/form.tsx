@@ -273,13 +273,15 @@ const IntervalStep = ({ stepIndex, onAddStep }: { stepIndex: number, onAddStep: 
       )}
 
       {/* Add next step button */}
-      <button
-        type="button"
-        className="btn btn-outline btn-sm"
-        onClick={onAddStep}
-      >
-        Add next Step
-      </button>
+      <div className="flex justify-start">
+        <button
+          type="button"
+          className="btn btn-outline btn-sm"
+          onClick={onAddStep}
+        >
+          Add next Step
+        </button>
+      </div>
     </div>
   );
 };

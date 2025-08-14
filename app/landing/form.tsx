@@ -195,15 +195,30 @@ const IntervalStep = ({ stepIndex, onAddStep }: { stepIndex: number, onAddStep: 
         <label className="label">
           <span className="label-text">Purpose</span>
         </label>
-        <select 
-          className="select select-bordered w-full" 
-          value={purpose}
-          onChange={(e) => setPurpose(e.target.value as 'work' | 'recovery')}
-          name={`step-${stepIndex}-purpose`}
-        >
-          <option value="work">Work</option>
-          <option value="recovery">Recovery</option>
-        </select>
+        <div className="flex flex-wrap gap-4">
+          <label className="label cursor-pointer gap-2">
+            <input
+              type="radio"
+              name={`step-${stepIndex}-purpose`}
+              value="work"
+              checked={purpose === 'work'}
+              onChange={(e) => setPurpose(e.target.value as 'work' | 'recovery')}
+              className="radio radio-sm"
+            />
+            <span className="label-text">Work</span>
+          </label>
+          <label className="label cursor-pointer gap-2">
+            <input
+              type="radio"
+              name={`step-${stepIndex}-purpose`}
+              value="recovery"
+              checked={purpose === 'recovery'}
+              onChange={(e) => setPurpose(e.target.value as 'work' | 'recovery')}
+              className="radio radio-sm"
+            />
+            <span className="label-text">Recovery</span>
+          </label>
+        </div>
       </div>
 
       {/* Goal selector - only show for work steps */}

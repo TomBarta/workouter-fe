@@ -182,13 +182,17 @@ const TimeGoalInput = (): ReactNode => (
 );
 
 const CustomGoalInput = (): ReactNode => (
-  <Fragment></Fragment>
-  // IntervalBlocks 
-  // IntervalName
-  // Goal (Open, Distance, Calorie, Time)
-  // Alert (hr Zone)
-  // Recovery Time?
-  // Repeat?
+  <div className="form-control w-full max-w-xs">
+    <div className="p-4 bg-gray-100 rounded-lg">
+      <h3 className="font-semibold mb-2">Custom Workout Builder</h3>
+      <p className="text-sm text-gray-600">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
+      </p>
+      <div className="mt-2 text-xs text-gray-500">
+        Coming soon: IntervalBlocks, Goals, Alerts, Recovery Time, Repeats
+      </div>
+    </div>
+  </div>
 )
 
 function handleFormAction(state: Record<string, unknown>, event: { target: { name: string; value: string } }): Record<string, unknown> {

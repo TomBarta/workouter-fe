@@ -189,7 +189,7 @@ const IntervalStep = ({ stepIndex, onAddStep }: { stepIndex: number, onAddStep: 
   return (
     <div className="border border-gray-300 rounded-lg p-4 mb-4">
       <h4 className="font-semibold mb-3">Step {stepIndex + 1}</h4>
-      
+
       {/* Purpose selector */}
       <div className="form-control w-full max-w-xs mb-4">
         <label className="label">
@@ -228,8 +228,8 @@ const IntervalStep = ({ stepIndex, onAddStep }: { stepIndex: number, onAddStep: 
             <label className="label">
               <span className="label-text">Goal</span>
             </label>
-            <select 
-              className="select select-bordered w-full" 
+            <select
+              className="select select-bordered w-full"
               value={goalType}
               onChange={(e) => setGoalType(e.target.value)}
               name={`step-${stepIndex}-goal-type`}
@@ -271,8 +271,8 @@ const IntervalStep = ({ stepIndex, onAddStep }: { stepIndex: number, onAddStep: 
       )}
 
       {/* Add next step button */}
-      <button 
-        type="button" 
+      <button
+        type="button"
         className="btn btn-outline btn-sm"
         onClick={onAddStep}
       >
@@ -291,13 +291,13 @@ const CustomGoalInput = (): ReactNode => {
 
   return (
     <div className="form-control w-full max-w-xs">
-      <div className="p-4 bg-gray-100 rounded-lg">
+      <div className="py-4 bg-gray-100 rounded-lg">
         <h3 className="font-semibold mb-4">Custom Workout Builder</h3>
-        
+
         {steps.map((stepIndex) => (
-          <IntervalStep 
-            key={stepIndex} 
-            stepIndex={stepIndex} 
+          <IntervalStep
+            key={stepIndex}
+            stepIndex={stepIndex}
             onAddStep={addStep}
           />
         ))}

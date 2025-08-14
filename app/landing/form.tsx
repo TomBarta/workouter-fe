@@ -1,7 +1,7 @@
 import { createWorkout } from "@/app/lib/actions";
 import { activities, DistanceUnits, EnergyUnits, TimeUnits, workoutGoals, WorkoutGoalTypes, WorkoutPlan, workoutType } from "@/app/utils/workouts";
 import Form from 'next/form';
-import { useState, useEffect, ReactNode, JSX } from "react";
+import { useState, useEffect, ReactNode, JSX, Fragment } from "react";
 import { useActionState } from "react";
 
 // Sport selector component
@@ -181,6 +181,16 @@ const TimeGoalInput = (): ReactNode => (
   </div>
 );
 
+const CustomGoalInput = (): ReactNode => (
+  <Fragment></Fragment>
+  // IntervalBlocks 
+  // IntervalName
+  // Goal (Open, Distance, Calorie, Time)
+  // Alert (hr Zone)
+  // Recovery Time?
+  // Repeat?
+)
+
 function handleFormAction(state: Record<string, unknown>, event: { target: { name: string; value: string } }): Record<string, unknown> {
   const { name, value } = event.target;
 
@@ -291,6 +301,7 @@ export default function WorkoutForm(): JSX.Element {
             {formState.goalSelectMenu === 'distance' && <DistanceGoalInput />}
             {formState.goalSelectMenu === 'calories' && <EnergyGoalInput />}
             {formState.goalSelectMenu === 'time' && <TimeGoalInput />}
+            {formState.goalSelectMenu === 'custom' && <TimeGoalInput />}
 
             {WorkoutNameInput()}
           </>

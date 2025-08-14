@@ -311,14 +311,16 @@ const IntervalStep = ({ stepIndex, onAddStep, onRemove, canRemove }: {
 };
 
 const CustomGoalInput = (): ReactNode => {
-  const [steps, setSteps] = useState<number[]>([0]);
+  const [steps, setSteps] = useState<{ id: number; index: number }[]>([{ id: 0, index: 0 }]);
+  const [nextId, setNextId] = useState(1);
 
   const addStep = () => {
-    setSteps(prev => [...prev, prev.length]);
+    setSteps(prev => [...prev, { id: nextId, index: prev.length }]);
+    setNextId(prev => prev + 1);
   };
 
-  const removeStep = (indexToRemove: number) => {
-    setSteps(prev => prev.filter((_, index) => index !== indexToRemove));
+  const removeStep = (idToRemove: number) => {
+    setSteps(prev => prev.filter(step => step.id !== idToRemove).map((step, index) => ({ ...step, index })));
   };
 
   return (
@@ -326,12 +328,12 @@ const CustomGoalInput = (): ReactNode => {
       <div className="py-4 bg-gray-100 rounded-lg">
         <h3 className="font-semibold mb-4">Custom Workout Builder</h3>
 
-        {steps.map((stepIndex, arrayIndex) => (
+        {steps.map((step) => (
           <IntervalStep
-            key={stepIndex}
-            stepIndex={arrayIndex}
+            key={step.id}
+            stepIndex={step.index}
             onAddStep={addStep}
-            onRemove={() => removeStep(arrayIndex)}
+            onRemove={() => removeStep(step.id)}
             canRemove={steps.length > 1}
           />
         ))}

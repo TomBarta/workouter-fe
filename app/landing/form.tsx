@@ -181,19 +181,111 @@ const TimeGoalInput = (): ReactNode => (
   </div>
 );
 
-const CustomGoalInput = (): ReactNode => (
-  <div className="form-control w-full max-w-xs">
-    <div className="p-4 bg-gray-100 rounded-lg">
-      <h3 className="font-semibold mb-2">Custom Workout Builder</h3>
-      <p className="text-sm text-gray-600">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
-      </p>
-      <div className="mt-2 text-xs text-gray-500">
-        Coming soon: IntervalBlocks, Goals, Alerts, Recovery Time, Repeats
+// IntervalStep component for custom workouts
+const IntervalStep = ({ stepIndex, onAddStep }: { stepIndex: number, onAddStep: () => void }): ReactNode => {
+  const [purpose, setPurpose] = useState<'work' | 'recovery'>('work');
+  const [goalType, setGoalType] = useState<string>('');
+
+  return (
+    <div className="border border-gray-300 rounded-lg p-4 mb-4">
+      <h4 className="font-semibold mb-3">Step {stepIndex + 1}</h4>
+      
+      {/* Purpose selector */}
+      <div className="form-control w-full max-w-xs mb-4">
+        <label className="label">
+          <span className="label-text">Purpose</span>
+        </label>
+        <select 
+          className="select select-bordered w-full" 
+          value={purpose}
+          onChange={(e) => setPurpose(e.target.value as 'work' | 'recovery')}
+          name={`step-${stepIndex}-purpose`}
+        >
+          <option value="work">Work</option>
+          <option value="recovery">Recovery</option>
+        </select>
+      </div>
+
+      {/* Goal selector - only show for work steps */}
+      {purpose === 'work' && (
+        <>
+          <div className="form-control w-full max-w-xs mb-4">
+            <label className="label">
+              <span className="label-text">Goal</span>
+            </label>
+            <select 
+              className="select select-bordered w-full" 
+              value={goalType}
+              onChange={(e) => setGoalType(e.target.value)}
+              name={`step-${stepIndex}-goal-type`}
+            >
+              <option value="">Select goal</option>
+              <option value="open">Open</option>
+              <option value="distance">Distance</option>
+              <option value="calories">Calories</option>
+              <option value="time">Time</option>
+            </select>
+          </div>
+
+          {/* Render goal input based on selected goal type */}
+          {goalType === 'distance' && (
+            <div className="mb-4">
+              <DistanceGoalInput />
+            </div>
+          )}
+          {goalType === 'calories' && (
+            <div className="mb-4">
+              <EnergyGoalInput />
+            </div>
+          )}
+          {goalType === 'time' && (
+            <div className="mb-4">
+              <TimeGoalInput />
+            </div>
+          )}
+          {goalType === 'open' && (
+            <div className="mb-4 p-2 bg-gray-50 rounded">
+              <span className="text-sm text-gray-600">Open goal - no specific target</span>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Add next step button */}
+      <button 
+        type="button" 
+        className="btn btn-outline btn-sm"
+        onClick={onAddStep}
+      >
+        Add next Step
+      </button>
+    </div>
+  );
+};
+
+const CustomGoalInput = (): ReactNode => {
+  const [steps, setSteps] = useState<number[]>([0]);
+
+  const addStep = () => {
+    setSteps(prev => [...prev, prev.length]);
+  };
+
+  return (
+    <div className="form-control w-full max-w-xs">
+      <div className="p-4 bg-gray-100 rounded-lg">
+        <h3 className="font-semibold mb-4">Custom Workout Builder</h3>
+        
+        {steps.map((stepIndex) => (
+          <IntervalStep 
+            key={stepIndex} 
+            stepIndex={stepIndex} 
+            onAddStep={addStep}
+          />
+        ))}
       </div>
     </div>
-  </div>
-)
+  );
+};
 
 function handleFormAction(state: Record<string, unknown>, event: { target: { name: string; value: string } }): Record<string, unknown> {
   const { name, value } = event.target;

@@ -260,6 +260,16 @@ const IntervalStep = ({ stepIndex, onAddStep }: { stepIndex: number, onAddStep: 
         </>
       )}
 
+      {/* Recovery time input - only show for recovery steps */}
+      {purpose === 'recovery' && (
+        <div className="mb-4">
+          <label className="label">
+            <span className="label-text">Recovery Duration</span>
+          </label>
+          <TimeGoalInput />
+        </div>
+      )}
+
       {/* Add next step button */}
       <button 
         type="button" 

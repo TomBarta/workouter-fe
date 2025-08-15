@@ -34,7 +34,7 @@ export function setGoal(payload: Payload): WorkoutPlan['goal'] {
             const hoursNum = typeof hrs === 'string' ? parseInt(hrs) : (hrs || 0)
             const minsNum = typeof min === 'string' ? parseInt(min) : (min || 0)
             const secsNum = typeof sec === 'string' ? parseInt(sec) : (sec || 0)
-            
+
             const timeInSeconds = (hoursNum * 3600) + (minsNum * 60) + secsNum
             return { type: WorkoutGoalTypes.time, unit: 'seconds', targetDuration: timeInSeconds }
         case 'energy':
@@ -46,12 +46,52 @@ export function setGoal(payload: Payload): WorkoutPlan['goal'] {
     return { type: WorkoutGoalTypes.open }
 }
 
+export function createIntervalBlocks(result) {
+    const blocks = [{
+        type: "work",
+        
+    }]
+    const steps = Object.entries(result)
+        .filter(entry => entry[0].includes('step-'))
+        .map(([fullKey, value]) => {
+            const [, step, key] = fullKey.split('-')
+            return {[step]: {[key]: value}}
+        })
+    
+    result.blocks = blocks
+}
+
 export function cleanUpPayload(payload: Payload): WorkoutPlan {
     // Create a new object to avoid modifying the original
     const result = { ...payload };
 
     // Ensure swimmingLocation is set
     result.swimmingLocation = 'indoors';
+    if (result.goalSelectMenu == 'custom') {
+        const testResult = {
+            activityType: 'running',
+            goalSelectMenu: 'custom',
+            'step-0-purpose': 'work',
+            'step-0-goal-type': 'distance',
+            'step-0-targetValue': '0',
+            'step-0-unit': 'yds',
+            'step-1-purpose': 'recovery',
+            'step-1-min': '5',
+            'step-1-sec': '',
+            'step-2-purpose': 'work',
+            'step-2-goal-type': 'distance',
+            'step-2-targetValue': '50',
+            'step-2-unit': 'km',
+            'step-3-purpose': 'recovery',
+            'step-3-min': '10',
+            'step-3-sec': '',
+            displayName: 'demo ',
+            workoutType: 'customWorkout',
+            goal: { type: 'open' }
+        }
+        result = createIntervalBlocks(testResult)
+    }
+
 
     // Remove goalSelectMenu property
     const { goalSelectMenu: _, ...cleanPayload } = result;

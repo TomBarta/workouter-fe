@@ -39,17 +39,17 @@ export const BlockCard = ({
     };
 
     return (
-        <div className="card bg-base-100 shadow border-2 border-primary/20">
+        <div className="card-workout border-workouter-orange-200">
             <div className="card-body">
                 <div className="flex justify-between items-start mb-4">
-                    <h3 className="card-title text-xl text-primary">
+                    <h3 className="card-title text-xl text-workouter-orange-600 font-bold">
                         Block {block.type === 'work' ? 'Work' : 'Recovery'}
                     </h3>
                     {canRemove && (
                         <button
                             type="button"
                             onClick={onRemove}
-                            className="btn btn-ghost btn-sm text-red-500 hover:text-red-700"
+                            className="btn btn-ghost btn-sm text-error-500 hover:text-error-600 hover:bg-error-50 transition-colors duration-200"
                         >
                             Remove
                         </button>
@@ -64,18 +64,18 @@ export const BlockCard = ({
                                 type="radio"
                                 checked={block.type === 'work'}
                                 onChange={() => updateBlock({ type: 'work' })}
-                                className="radio radio-primary"
+                                className="radio radio-primary border-workouter-gray-300 checked:border-workouter-orange-500 checked:bg-workouter-orange-500"
                             />
-                            <span className="label-text">Work</span>
+                            <span className="label-text text-workouter-black-600">Work</span>
                         </label>
                         <label className="label cursor-pointer gap-2">
                             <input
                                 type="radio"
                                 checked={block.type === 'recovery'}
                                 onChange={() => updateBlock({ type: 'recovery' })}
-                                className="radio radio-primary"
+                                className="radio radio-primary border-workouter-gray-300 checked:border-workouter-orange-500 checked:bg-workouter-orange-500"
                             />
-                            <span className="label-text">Recovery</span>
+                            <span className="label-text text-workouter-black-600">Recovery</span>
                         </label>
                     </div>
                 </div>
@@ -83,25 +83,25 @@ export const BlockCard = ({
                 {/* Iterations input */}
                 <div className="form-control mb-4">
                     <label className="label">
-                        <span className="label-text font-medium">Iterations</span>
+                        <span className="label-text font-medium text-workouter-black-700">Iterations</span>
                     </label>
                     <input
                         type="number"
                         min={1}
                         value={block.iterations}
                         onChange={(e) => updateBlock({ iterations: parseInt(e.target.value) || 1 })}
-                        className="input input-bordered w-24"
+                        className="input input-bordered w-24 border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
                     />
                 </div>
 
                 {/* Steps */}
                 <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                        <h4 className="font-semibold text-lg">Steps</h4>
+                        <h4 className="font-semibold text-lg text-workouter-black-800">Steps</h4>
                         <button
                             type="button"
                             onClick={addStepToBlock}
-                            className="btn btn-primary btn-sm"
+                            className="btn btn-sm bg-workouter-orange-500 hover:bg-workouter-orange-600 text-white border-0 transition-colors duration-200"
                         >
                             Add Step
                         </button>

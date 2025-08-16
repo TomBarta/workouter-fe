@@ -1,5 +1,5 @@
 import { vi, describe, test, expect, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import { StepCard } from '@/app/landing/components/StepCard'
 import { Step } from '@/app/landing/components/types'
 
@@ -32,7 +32,7 @@ describe('StepCard', () => {
     })
 
     test('renders work step correctly', () => {
-        render(
+        const { container } = render(
             <StepCard
                 step={mockStep}
                 onUpdate={mockOnUpdate}
@@ -41,14 +41,14 @@ describe('StepCard', () => {
             />
         )
 
-        expect(screen.getByText('Work')).toBeInTheDocument()
-        expect(screen.getByText('Purpose')).toBeInTheDocument()
+        const stepCard = container.firstChild as HTMLElement
+        expect(within(stepCard).getByRole('heading', { name: 'Work' })).toBeTruthy()
+        expect(within(stepCard).getByText('Purpose')).toBeTruthy()
     })
 
     test('renders recovery step correctly', () => {
         const recoveryStep: Step = { ...mockStep, purpose: 'recovery' }
-
-        render(
+        const { container } = render(
             <StepCard
                 step={recoveryStep}
                 onUpdate={mockOnUpdate}
@@ -57,11 +57,12 @@ describe('StepCard', () => {
             />
         )
 
-        expect(screen.getByText('Recovery')).toBeInTheDocument()
+        const stepCard = container.firstChild as HTMLElement
+        expect(within(stepCard).getByRole('heading', { name: 'Recovery' })).toBeTruthy()
     })
 
     test('shows remove button when canRemove is true', () => {
-        render(
+        const { container } = render(
             <StepCard
                 step={mockStep}
                 onUpdate={mockOnUpdate}
@@ -70,11 +71,12 @@ describe('StepCard', () => {
             />
         )
 
-        expect(screen.getByText('Remove')).toBeInTheDocument()
+        const stepCard = container.firstChild as HTMLElement
+        expect(within(stepCard).getByRole('button', { name: 'Remove' })).toBeTruthy()
     })
 
     test('hides remove button when canRemove is false', () => {
-        render(
+        const { container } = render(
             <StepCard
                 step={mockStep}
                 onUpdate={mockOnUpdate}
@@ -83,11 +85,12 @@ describe('StepCard', () => {
             />
         )
 
-        expect(screen.queryByText('Remove')).not.toBeInTheDocument()
+        const stepCard = container.firstChild as HTMLElement
+        expect(within(stepCard).queryByRole('button', { name: 'Remove' })).toBeFalsy()
     })
 
     test('calls onRemove when remove button is clicked', () => {
-        render(
+        const { container } = render(
             <StepCard
                 step={mockStep}
                 onUpdate={mockOnUpdate}
@@ -96,14 +99,15 @@ describe('StepCard', () => {
             />
         )
 
-        const removeButton = screen.getByText('Remove')
+        const stepCard = container.firstChild as HTMLElement
+        const removeButton = within(stepCard).getByRole('button', { name: 'Remove' })
         fireEvent.click(removeButton)
 
         expect(mockOnRemove).toHaveBeenCalledTimes(1)
     })
 
     test('calls onUpdate when purpose changes', () => {
-        render(
+        const { container } = render(
             <StepCard
                 step={mockStep}
                 onUpdate={mockOnUpdate}
@@ -112,7 +116,8 @@ describe('StepCard', () => {
             />
         )
 
-        const recoveryRadio = screen.getByLabelText('Recovery')
+        const stepCard = container.firstChild as HTMLElement
+        const recoveryRadio = within(stepCard).getByRole('radio', { name: 'Recovery' })
         fireEvent.click(recoveryRadio)
 
         expect(mockOnUpdate).toHaveBeenCalledWith({
@@ -122,7 +127,7 @@ describe('StepCard', () => {
     })
 
     test('shows goal type selector for work steps', () => {
-        render(
+        const { container } = render(
             <StepCard
                 step={mockStep}
                 onUpdate={mockOnUpdate}
@@ -131,14 +136,15 @@ describe('StepCard', () => {
             />
         )
 
-        expect(screen.getByText('Goal Type')).toBeInTheDocument()
-        expect(screen.getByText('Select goal...')).toBeInTheDocument()
+        const stepCard = container.firstChild as HTMLElement
+        expect(within(stepCard).getByText('Goal Type')).toBeTruthy()
+        expect(within(stepCard).getByText('Select goal...')).toBeTruthy()
     })
 
     test('shows distance inputs when distance goal is selected', () => {
         const distanceStep: Step = { ...mockStep, goalType: 'distance' }
 
-        render(
+        const { container } = render(
             <StepCard
                 step={distanceStep}
                 onUpdate={mockOnUpdate}
@@ -147,14 +153,16 @@ describe('StepCard', () => {
             />
         )
 
-        expect(screen.getByPlaceholderText('Distance')).toBeInTheDocument()
-        expect(screen.getByText('Unit')).toBeInTheDocument()
+        const stepCard = container.firstChild as HTMLElement
+        const distanceInput = within(stepCard).queryByPlaceholderText('Distance')
+        expect(distanceInput).toBeTruthy()
+        expect(within(stepCard).getByText('Unit')).toBeTruthy()
     })
 
     test('shows calories inputs when calories goal is selected', () => {
         const caloriesStep: Step = { ...mockStep, goalType: 'calories' }
 
-        render(
+        const { container } = render(
             <StepCard
                 step={caloriesStep}
                 onUpdate={mockOnUpdate}
@@ -163,14 +171,16 @@ describe('StepCard', () => {
             />
         )
 
-        expect(screen.getByPlaceholderText('Calories')).toBeInTheDocument()
-        expect(screen.getByText('Unit')).toBeInTheDocument()
+        const stepCard = container.firstChild as HTMLElement
+        const caloriesInput = within(stepCard).queryByPlaceholderText('Calories')
+        expect(caloriesInput).toBeTruthy()
+        expect(within(stepCard).getByText('Unit')).toBeTruthy()
     })
 
     test('shows time inputs when time goal is selected', () => {
         const timeStep: Step = { ...mockStep, goalType: 'time' }
 
-        render(
+        const { container } = render(
             <StepCard
                 step={timeStep}
                 onUpdate={mockOnUpdate}
@@ -179,15 +189,19 @@ describe('StepCard', () => {
             />
         )
 
-        expect(screen.getByPlaceholderText('Hours')).toBeInTheDocument()
-        expect(screen.getByPlaceholderText('Minutes')).toBeInTheDocument()
-        expect(screen.getByPlaceholderText('Seconds')).toBeInTheDocument()
+        const stepCard = container.firstChild as HTMLElement
+        const hoursInput = within(stepCard).queryByPlaceholderText('Hours')
+        const minutesInput = within(stepCard).queryByPlaceholderText('Minutes')
+        const secondsInput = within(stepCard).queryByPlaceholderText('Seconds')
+        expect(hoursInput).toBeTruthy()
+        expect(minutesInput).toBeTruthy()
+        expect(secondsInput).toBeTruthy()
     })
 
     test('shows recovery duration inputs for recovery steps', () => {
         const recoveryStep: Step = { ...mockStep, purpose: 'recovery' }
 
-        render(
+        const { container } = render(
             <StepCard
                 step={recoveryStep}
                 onUpdate={mockOnUpdate}
@@ -196,13 +210,16 @@ describe('StepCard', () => {
             />
         )
 
-        expect(screen.getByText('Recovery Duration')).toBeInTheDocument()
-        expect(screen.getByPlaceholderText('Minutes')).toBeInTheDocument()
-        expect(screen.getByPlaceholderText('Seconds')).toBeInTheDocument()
+        const stepCard = container.firstChild as HTMLElement
+        expect(within(stepCard).getByText('Recovery Duration')).toBeTruthy()
+        const minutesInput = within(stepCard).queryByPlaceholderText('Minutes')
+        const secondsInput = within(stepCard).queryByPlaceholderText('Seconds')
+        expect(minutesInput).toBeTruthy()
+        expect(secondsInput).toBeTruthy()
     })
 
     test('calls onUpdate when goal type changes', () => {
-        render(
+        const { container } = render(
             <StepCard
                 step={mockStep}
                 onUpdate={mockOnUpdate}
@@ -211,8 +228,9 @@ describe('StepCard', () => {
             />
         )
 
-        const goalSelect = screen.getByText('Select goal...').closest('select')
-        fireEvent.change(goalSelect!, { target: { value: 'distance' } })
+        const stepCard = container.firstChild as HTMLElement
+        const goalSelect = within(stepCard).getByRole('combobox')
+        fireEvent.change(goalSelect, { target: { value: 'distance' } })
 
         expect(mockOnUpdate).toHaveBeenCalledWith({
             ...mockStep,
@@ -223,7 +241,7 @@ describe('StepCard', () => {
     test('calls onUpdate when distance value changes', () => {
         const distanceStep: Step = { ...mockStep, goalType: 'distance' }
 
-        render(
+        const { container } = render(
             <StepCard
                 step={distanceStep}
                 onUpdate={mockOnUpdate}
@@ -232,7 +250,8 @@ describe('StepCard', () => {
             />
         )
 
-        const distanceInput = screen.getByPlaceholderText('Distance')
+        const stepCard = container.firstChild as HTMLElement
+        const distanceInput = within(stepCard).getByPlaceholderText('Distance')
         fireEvent.change(distanceInput, { target: { value: '5.5' } })
 
         expect(mockOnUpdate).toHaveBeenCalledWith({
@@ -244,7 +263,7 @@ describe('StepCard', () => {
     test('calls onUpdate when calories value changes', () => {
         const caloriesStep: Step = { ...mockStep, goalType: 'calories' }
 
-        render(
+        const { container } = render(
             <StepCard
                 step={caloriesStep}
                 onUpdate={mockOnUpdate}
@@ -253,7 +272,8 @@ describe('StepCard', () => {
             />
         )
 
-        const caloriesInput = screen.getByPlaceholderText('Calories')
+        const stepCard = container.firstChild as HTMLElement
+        const caloriesInput = within(stepCard).getByPlaceholderText('Calories')
         fireEvent.change(caloriesInput, { target: { value: '500' } })
 
         expect(mockOnUpdate).toHaveBeenCalledWith({
@@ -265,7 +285,7 @@ describe('StepCard', () => {
     test('calls onUpdate when time values change', () => {
         const timeStep: Step = { ...mockStep, goalType: 'time' }
 
-        render(
+        const { container } = render(
             <StepCard
                 step={timeStep}
                 onUpdate={mockOnUpdate}
@@ -274,7 +294,8 @@ describe('StepCard', () => {
             />
         )
 
-        const minutesInput = screen.getByPlaceholderText('Minutes')
+        const stepCard = container.firstChild as HTMLElement
+        const minutesInput = within(stepCard).getByPlaceholderText('Minutes')
         fireEvent.change(minutesInput, { target: { value: '30' } })
 
         expect(mockOnUpdate).toHaveBeenCalledWith({
@@ -284,7 +305,7 @@ describe('StepCard', () => {
     })
 
     test('has correct CSS classes for work step', () => {
-        render(
+        const { container } = render(
             <StepCard
                 step={mockStep}
                 onUpdate={mockOnUpdate}
@@ -293,14 +314,14 @@ describe('StepCard', () => {
             />
         )
 
-        const card = screen.getByText('Work').closest('.card')
-        expect(card).toHaveClass('border-gray-300')
+        const stepCard = container.firstChild as HTMLElement
+        expect(stepCard.className).toContain('border-workouter-gray-300')
     })
 
     test('has correct CSS classes for recovery step', () => {
         const recoveryStep: Step = { ...mockStep, purpose: 'recovery' }
 
-        render(
+        const { container } = render(
             <StepCard
                 step={recoveryStep}
                 onUpdate={mockOnUpdate}
@@ -309,7 +330,8 @@ describe('StepCard', () => {
             />
         )
 
-        const card = screen.getByText('Recovery').closest('.card')
-        expect(card).toHaveClass('border-blue-300', 'bg-blue-50')
+        const stepCard = container.firstChild as HTMLElement
+        expect(stepCard.className).toContain('border-workouter-gold-300')
+        expect(stepCard.className).toContain('bg-workouter-gold-50')
     })
 })

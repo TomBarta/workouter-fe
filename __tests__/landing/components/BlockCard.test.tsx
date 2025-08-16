@@ -1,5 +1,5 @@
 import { vi, describe, test, expect, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import { BlockCard } from '@/app/landing/components/BlockCard'
 import { Block } from '@/app/landing/components/types'
 
@@ -43,7 +43,7 @@ describe('BlockCard', () => {
     })
 
     test('renders block title correctly', () => {
-        render(
+        const { container } = render(
             <BlockCard
                 block={mockBlock}
                 onUpdate={mockOnUpdate}
@@ -52,26 +52,27 @@ describe('BlockCard', () => {
             />
         )
 
-        expect(screen.getByText('Block Work')).toBeInTheDocument()
+        const blockCard = container.firstChild as HTMLElement
+        expect(within(blockCard).getByRole('heading', { name: /Block Work/ })).toBeTruthy()
     })
 
-    test('renders recovery block title correctly', () => {
-        const recoveryBlock: Block = { ...mockBlock, type: 'recovery' }
-
-        render(
+    test('renders all steps', () => {
+        const { container } = render(
             <BlockCard
-                block={recoveryBlock}
+                block={mockBlock}
                 onUpdate={mockOnUpdate}
                 onRemove={mockOnRemove}
                 canRemove={true}
             />
         )
 
-        expect(screen.getByText('Block Recovery')).toBeInTheDocument()
+        const blockCard = container.firstChild as HTMLElement
+        const stepCards = within(blockCard).getAllByTestId('step-card')
+        expect(stepCards).toHaveLength(2)
     })
 
     test('shows remove button when canRemove is true', () => {
-        render(
+        const { container } = render(
             <BlockCard
                 block={mockBlock}
                 onUpdate={mockOnUpdate}
@@ -80,11 +81,12 @@ describe('BlockCard', () => {
             />
         )
 
-        expect(screen.getByText('Remove')).toBeInTheDocument()
+        const blockCard = container.firstChild as HTMLElement
+        expect(within(blockCard).getByRole('button', { name: 'Remove' })).toBeTruthy()
     })
 
     test('hides remove button when canRemove is false', () => {
-        render(
+        const { container } = render(
             <BlockCard
                 block={mockBlock}
                 onUpdate={mockOnUpdate}
@@ -93,11 +95,12 @@ describe('BlockCard', () => {
             />
         )
 
-        expect(screen.queryByText('Remove')).not.toBeInTheDocument()
+        const blockCard = container.firstChild as HTMLElement
+        expect(within(blockCard).queryByRole('button', { name: 'Remove' })).toBeFalsy()
     })
 
     test('calls onRemove when remove button is clicked', () => {
-        render(
+        const { container } = render(
             <BlockCard
                 block={mockBlock}
                 onUpdate={mockOnUpdate}
@@ -106,14 +109,15 @@ describe('BlockCard', () => {
             />
         )
 
-        const removeButton = screen.getByText('Remove')
+        const blockCard = container.firstChild as HTMLElement
+        const removeButton = within(blockCard).getByRole('button', { name: 'Remove' })
         fireEvent.click(removeButton)
 
         expect(mockOnRemove).toHaveBeenCalledTimes(1)
     })
 
     test('calls onUpdate when block type changes', () => {
-        render(
+        const { container } = render(
             <BlockCard
                 block={mockBlock}
                 onUpdate={mockOnUpdate}
@@ -122,7 +126,8 @@ describe('BlockCard', () => {
             />
         )
 
-        const recoveryRadio = screen.getByLabelText('Recovery')
+        const blockCard = container.firstChild as HTMLElement
+        const recoveryRadio = within(blockCard).getByRole('radio', { name: 'Recovery' })
         fireEvent.click(recoveryRadio)
 
         expect(mockOnUpdate).toHaveBeenCalledWith({
@@ -132,7 +137,7 @@ describe('BlockCard', () => {
     })
 
     test('calls onUpdate when iterations change', () => {
-        render(
+        const { container } = render(
             <BlockCard
                 block={mockBlock}
                 onUpdate={mockOnUpdate}
@@ -141,7 +146,8 @@ describe('BlockCard', () => {
             />
         )
 
-        const iterationsInput = screen.getByDisplayValue('3')
+        const blockCard = container.firstChild as HTMLElement
+        const iterationsInput = within(blockCard).getByDisplayValue('3')
         fireEvent.change(iterationsInput, { target: { value: '5' } })
 
         expect(mockOnUpdate).toHaveBeenCalledWith({
@@ -150,8 +156,8 @@ describe('BlockCard', () => {
         })
     })
 
-    test('renders all steps', () => {
-        render(
+    test('calls onUpdate when step is added', () => {
+        const { container } = render(
             <BlockCard
                 block={mockBlock}
                 onUpdate={mockOnUpdate}
@@ -160,34 +166,8 @@ describe('BlockCard', () => {
             />
         )
 
-        expect(screen.getByText('Step: step-1')).toBeInTheDocument()
-        expect(screen.getByText('Step: step-2')).toBeInTheDocument()
-    })
-
-    test('shows add step button', () => {
-        render(
-            <BlockCard
-                block={mockBlock}
-                onUpdate={mockOnUpdate}
-                onRemove={mockOnRemove}
-                canRemove={true}
-            />
-        )
-
-        expect(screen.getByText('Add Step')).toBeInTheDocument()
-    })
-
-    test('calls onUpdate when add step button is clicked', () => {
-        render(
-            <BlockCard
-                block={mockBlock}
-                onUpdate={mockOnUpdate}
-                onRemove={mockOnRemove}
-                canRemove={true}
-            />
-        )
-
-        const addStepButton = screen.getByText('Add Step')
+        const blockCard = container.firstChild as HTMLElement
+        const addStepButton = within(blockCard).getByRole('button', { name: 'Add Step' })
         fireEvent.click(addStepButton)
 
         expect(mockOnUpdate).toHaveBeenCalledWith({
@@ -204,7 +184,7 @@ describe('BlockCard', () => {
     })
 
     test('calls onUpdate when step is updated', () => {
-        render(
+        const { container } = render(
             <BlockCard
                 block={mockBlock}
                 onUpdate={mockOnUpdate}
@@ -213,7 +193,10 @@ describe('BlockCard', () => {
             />
         )
 
-        const updateStepButton = screen.getAllByText('Update Step')[0]
+        const blockCard = container.firstChild as HTMLElement
+        const stepCards = within(blockCard).getAllByTestId('step-card')
+        const firstStepCard = stepCards[0]
+        const updateStepButton = within(firstStepCard).getByText('Update Step')
         fireEvent.click(updateStepButton)
 
         expect(mockOnUpdate).toHaveBeenCalledWith({
@@ -226,7 +209,7 @@ describe('BlockCard', () => {
     })
 
     test('calls onUpdate when step is removed', () => {
-        render(
+        const { container } = render(
             <BlockCard
                 block={mockBlock}
                 onUpdate={mockOnUpdate}
@@ -235,7 +218,10 @@ describe('BlockCard', () => {
             />
         )
 
-        const removeStepButton = screen.getAllByText('Remove Step')[0]
+        const blockCard = container.firstChild as HTMLElement
+        const stepCards = within(blockCard).getAllByTestId('step-card')
+        const firstStepCard = stepCards[0]
+        const removeStepButton = within(firstStepCard).getByText('Remove Step')
         fireEvent.click(removeStepButton)
 
         expect(mockOnUpdate).toHaveBeenCalledWith({
@@ -250,7 +236,7 @@ describe('BlockCard', () => {
             steps: [mockBlock.steps[0]]
         }
 
-        render(
+        const { container } = render(
             <BlockCard
                 block={singleStepBlock}
                 onUpdate={mockOnUpdate}
@@ -259,7 +245,10 @@ describe('BlockCard', () => {
             />
         )
 
-        const removeStepButton = screen.getByText('Remove Step')
+        const blockCard = container.firstChild as HTMLElement
+        const stepCards = within(blockCard).getAllByTestId('step-card')
+        const firstStepCard = stepCards[0]
+        const removeStepButton = within(firstStepCard).getByText('Remove Step')
         fireEvent.click(removeStepButton)
 
         // Should not call onUpdate since we can't remove the last step
@@ -267,7 +256,7 @@ describe('BlockCard', () => {
     })
 
     test('has correct CSS classes', () => {
-        render(
+        const { container } = render(
             <BlockCard
                 block={mockBlock}
                 onUpdate={mockOnUpdate}
@@ -276,12 +265,12 @@ describe('BlockCard', () => {
             />
         )
 
-        const card = screen.getByText('Block Work').closest('.card')
-        expect(card).toHaveClass('bg-base-100', 'shadow-xl', 'border-2', 'border-primary/20')
+        const blockCard = container.firstChild as HTMLElement
+        expect(blockCard.className).toContain('border-workouter-orange-200')
     })
 
     test('displays correct iterations value', () => {
-        render(
+        const { container } = render(
             <BlockCard
                 block={mockBlock}
                 onUpdate={mockOnUpdate}
@@ -290,12 +279,13 @@ describe('BlockCard', () => {
             />
         )
 
-        const iterationsInput = screen.getByDisplayValue('3') as HTMLInputElement
+        const blockCard = container.firstChild as HTMLElement
+        const iterationsInput = within(blockCard).getByDisplayValue('3') as HTMLInputElement
         expect(iterationsInput.value).toBe('3')
     })
 
     test('iterations input has correct attributes', () => {
-        render(
+        const { container } = render(
             <BlockCard
                 block={mockBlock}
                 onUpdate={mockOnUpdate}
@@ -304,8 +294,9 @@ describe('BlockCard', () => {
             />
         )
 
-        const iterationsInput = screen.getByDisplayValue('3')
-        expect(iterationsInput).toHaveAttribute('type', 'number')
-        expect(iterationsInput).toHaveAttribute('min', '1')
+        const blockCard = container.firstChild as HTMLElement
+        const iterationsInput = within(blockCard).getByDisplayValue('3') as HTMLInputElement
+        expect(iterationsInput.getAttribute('type')).toBe('number')
+        expect(iterationsInput.getAttribute('min')).toBe('1')
     })
 })

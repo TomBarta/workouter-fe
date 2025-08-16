@@ -102,12 +102,12 @@ export default function WorkoutForm(): JSX.Element {
   }, [formData, validateForm]);
 
   return (
-    <div className="min-h-screen py-8">
+    <div className="min-h-screen bg-brand-gradient py-8">
       <div className="container mx-auto px-4">
         <form onSubmit={handleSubmit} className="max-w-1/3 mx-auto">
           <div className="space-y-8">
             {/* Basic workout info */}
-            <div className="card bg-base-100 shadow">
+            <div className="card-workout">
               <div className="card-body">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <SportSelector
@@ -128,7 +128,7 @@ export default function WorkoutForm(): JSX.Element {
 
             {/* Custom workout builder - only show if custom workout type is selected */}
             {formData.goalSelectMenu === 'custom' && (
-              <div className="card bg-base-100 shadow">
+              <div className="card-workout">
                 <div className="card-body">
                   <CustomWorkoutBuilder
                     blocks={formData.blocks}
@@ -140,11 +140,11 @@ export default function WorkoutForm(): JSX.Element {
 
             {/* Workout details - show at the end if workout type is selected */}
             {formData.goalSelectMenu && (
-              <div className="card bg-base-100 shadow">
+              <div className="card-workout">
                 <div className="card-body">
-                  <h2 className="card-title text-2xl text-primary mb-6">Workout Details</h2>
+                  <h2 className="card-title text-2xl text-workouter-orange-600 mb-6 font-bold">Workout Details</h2>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     <WorkoutNameInput
                       value={formData.displayName}
                       onChange={(value) => updateFormData({ displayName: value })}
@@ -152,12 +152,12 @@ export default function WorkoutForm(): JSX.Element {
 
                     <div className="form-control w-full">
                       <label className="label">
-                        <span className="label-text text-lg font-semibold">Location</span>
+                        <span className="label-text text-lg font-semibold text-workouter-black-700">Location</span>
                       </label>
                       <select
                         value={formData.location}
                         onChange={(e) => updateFormData({ location: e.target.value as 'indoor' | 'outdoor' })}
-                        className="select select-bordered w-full text-lg"
+                        className="select select-bordered w-full text-lg border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
                       >
                         <option value="indoor">Indoor</option>
                         <option value="outdoor">Outdoor</option>

@@ -19,15 +19,15 @@ export const StepCard = ({
     };
 
     return (
-        <div className={`card bg-base-100 shadow-lg border-2 ${step.purpose === 'recovery'
-            ? 'border-blue-300 bg-blue-50 dark:bg-blue-900/20'
-            : 'border-gray-300'
+        <div className={`card-workout ${step.purpose === 'recovery'
+            ? 'border-workouter-gold-300 bg-workouter-gold-50'
+            : 'border-workouter-gray-300'
             }`}>
             <div className="card-body p-4">
                 <div className="flex justify-between items-start mb-3">
-                    <h4 className={`card-title text-lg ${step.purpose === 'recovery'
-                        ? 'text-blue-700 dark:text-blue-300'
-                        : 'text-gray-900 dark:text-gray-100'
+                    <h4 className={`card-title text-lg font-semibold ${step.purpose === 'recovery'
+                        ? 'text-workouter-gold-700'
+                        : 'text-workouter-black-900'
                         }`}>
                         {step.purpose === 'recovery' ? 'Recovery' : 'Work'}
                     </h4>
@@ -35,7 +35,7 @@ export const StepCard = ({
                         <button
                             type="button"
                             onClick={onRemove}
-                            className="btn btn-ghost btn-sm text-red-500 hover:text-red-700"
+                            className="btn btn-ghost btn-sm text-error-500 hover:text-error-600 hover:bg-error-50 transition-colors duration-200"
                         >
                             Remove
                         </button>
@@ -45,7 +45,7 @@ export const StepCard = ({
                 {/* Purpose selector */}
                 <div className="form-control mb-4">
                     <label className="label">
-                        <span className="label-text font-medium">Purpose</span>
+                        <span className="label-text font-medium text-workouter-black-700">Purpose</span>
                     </label>
                     <div className="flex gap-4">
                         <label className="label cursor-pointer gap-2">
@@ -53,18 +53,18 @@ export const StepCard = ({
                                 type="radio"
                                 checked={step.purpose === 'work'}
                                 onChange={() => updateStep({ purpose: 'work' })}
-                                className="radio radio-primary"
+                                className="radio radio-primary border-workouter-gray-300 checked:border-workouter-orange-500 checked:bg-workouter-orange-500"
                             />
-                            <span className="label-text">Work</span>
+                            <span className="label-text text-workouter-black-600">Work</span>
                         </label>
                         <label className="label cursor-pointer gap-2">
                             <input
                                 type="radio"
                                 checked={step.purpose === 'recovery'}
                                 onChange={() => updateStep({ purpose: 'recovery' })}
-                                className="radio radio-primary"
+                                className="radio radio-primary border-workouter-gray-300 checked:border-workouter-orange-500 checked:bg-workouter-orange-500"
                             />
-                            <span className="label-text">Recovery</span>
+                            <span className="label-text text-workouter-black-600">Recovery</span>
                         </label>
                     </div>
                 </div>
@@ -74,12 +74,12 @@ export const StepCard = ({
                     <div className="space-y-4">
                         <div className="form-control">
                             <label className="label">
-                                <span className="label-text font-medium">Goal Type</span>
+                                <span className="label-text font-medium text-workouter-black-700">Goal Type</span>
                             </label>
                             <select
                                 value={step.goalType || ''}
                                 onChange={(e) => updateStep({ goalType: e.target.value as 'distance' | 'calories' | 'time' | 'open' })}
-                                className="select select-bordered w-full"
+                                className="select select-bordered w-full border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
                             >
                                 <option value="">Select goal...</option>
                                 <option value="open">Open</option>
@@ -99,12 +99,12 @@ export const StepCard = ({
                                     placeholder="Distance"
                                     value={step.distanceValue || ''}
                                     onChange={(e) => updateStep({ distanceValue: parseFloat(e.target.value) || undefined })}
-                                    className="input input-bordered flex-1"
+                                    className="input input-bordered flex-1 border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
                                 />
                                 <select
                                     value={step.distanceUnit || ''}
                                     onChange={(e) => updateStep({ distanceUnit: e.target.value })}
-                                    className="select select-bordered w-32"
+                                    className="select select-bordered w-32 border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
                                 >
                                     <option value="">Unit</option>
                                     <option value={DistanceUnits.miles}>Miles</option>
@@ -124,12 +124,12 @@ export const StepCard = ({
                                     placeholder="Calories"
                                     value={step.caloriesValue || ''}
                                     onChange={(e) => updateStep({ caloriesValue: parseInt(e.target.value) || undefined })}
-                                    className="input input-bordered flex-1"
+                                    className="input input-bordered flex-1 border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
                                 />
                                 <select
                                     value={step.caloriesUnit || ''}
                                     onChange={(e) => updateStep({ caloriesUnit: e.target.value })}
-                                    className="select select-bordered w-32"
+                                    className="select select-bordered w-32 border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
                                 >
                                     <option value="">Unit</option>
                                     <option value={EnergyUnits.calories}>Calories</option>
@@ -148,7 +148,7 @@ export const StepCard = ({
                                     placeholder="Hours"
                                     value={step.timeHours || ''}
                                     onChange={(e) => updateStep({ timeHours: parseInt(e.target.value) || undefined })}
-                                    className="input input-bordered w-20"
+                                    className="input input-bordered w-20 border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
                                 />
                                 <input
                                     type="number"
@@ -157,7 +157,7 @@ export const StepCard = ({
                                     placeholder="Minutes"
                                     value={step.timeMinutes || ''}
                                     onChange={(e) => updateStep({ timeMinutes: parseInt(e.target.value) || undefined })}
-                                    className="input input-bordered w-20"
+                                    className="input input-bordered w-20 border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
                                 />
                                 <input
                                     type="number"
@@ -166,7 +166,7 @@ export const StepCard = ({
                                     placeholder="Seconds"
                                     value={step.timeSeconds || ''}
                                     onChange={(e) => updateStep({ timeSeconds: parseInt(e.target.value) || undefined })}
-                                    className="input input-bordered w-20"
+                                    className="input input-bordered w-20 border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
                                 />
                             </div>
                         )}
@@ -177,7 +177,7 @@ export const StepCard = ({
                 {step.purpose === 'recovery' && (
                     <div className="form-control">
                         <label className="label">
-                            <span className="label-text font-medium">Recovery Duration</span>
+                            <span className="label-text font-medium text-workouter-black-700">Recovery Duration</span>
                         </label>
                         <div className="flex gap-2">
                             <input
@@ -187,7 +187,7 @@ export const StepCard = ({
                                 placeholder="Minutes"
                                 value={step.timeMinutes || ''}
                                 onChange={(e) => updateStep({ timeMinutes: parseInt(e.target.value) || undefined })}
-                                className="input input-bordered w-20"
+                                className="input input-bordered w-20 border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
                             />
                             <input
                                 type="number"
@@ -196,7 +196,7 @@ export const StepCard = ({
                                 placeholder="Seconds"
                                 value={step.timeSeconds || ''}
                                 onChange={(e) => updateStep({ timeSeconds: parseInt(e.target.value) || undefined })}
-                                className="input input-bordered w-20"
+                                className="input input-bordered w-20 border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
                             />
                         </div>
                     </div>

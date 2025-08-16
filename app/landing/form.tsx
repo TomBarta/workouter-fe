@@ -102,12 +102,12 @@ export default function WorkoutForm(): JSX.Element {
   }, [formData, validateForm]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-8">
+    <div className="min-h-screen py-8">
       <div className="container mx-auto px-4">
         <form onSubmit={handleSubmit} className="max-w-1/3 mx-auto">
           <div className="space-y-8">
             {/* Basic workout info */}
-            <div className="card bg-base-100 shadow-xl">
+            <div className="card bg-base-100 shadow">
               <div className="card-body">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <SportSelector
@@ -128,7 +128,7 @@ export default function WorkoutForm(): JSX.Element {
 
             {/* Custom workout builder - only show if custom workout type is selected */}
             {formData.goalSelectMenu === 'custom' && (
-              <div className="card bg-base-100 shadow-xl">
+              <div className="card bg-base-100 shadow">
                 <div className="card-body">
                   <CustomWorkoutBuilder
                     blocks={formData.blocks}
@@ -140,7 +140,7 @@ export default function WorkoutForm(): JSX.Element {
 
             {/* Workout details - show at the end if workout type is selected */}
             {formData.goalSelectMenu && (
-              <div className="card bg-base-100 shadow-xl">
+              <div className="card bg-base-100 shadow">
                 <div className="card-body">
                   <h2 className="card-title text-2xl text-primary mb-6">Workout Details</h2>
 

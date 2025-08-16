@@ -39,7 +39,7 @@ export const BlockCard = ({
     };
 
     return (
-        <div className="card bg-base-100 shadow-xl border-2 border-primary/20">
+        <div className="card bg-base-100 shadow border-2 border-primary/20">
             <div className="card-body">
                 <div className="flex justify-between items-start mb-4">
                     <h3 className="card-title text-xl text-primary">

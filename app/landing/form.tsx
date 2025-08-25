@@ -1,4 +1,4 @@
-import { createWorkout } from "@/app/lib/actions";
+// Removed server action import - using API route instead
 import { useState, useEffect, useCallback, JSX } from "react";
 import {
   SportSelector,
@@ -16,7 +16,7 @@ import {
 // ============================================================================
 
 export default function WorkoutForm(): JSX.Element {
-  const [actionResult, setActionResult] = useState<{ success?: boolean; displayName?: string } | null>(null);
+  const [actionResult, setActionResult] = useState<{ success?: boolean; displayName?: string; error?: string } | null>(null);
   const [isFormValid, setIsFormValid] = useState(false);
 
   // Form data state
@@ -81,12 +81,40 @@ export default function WorkoutForm(): JSX.Element {
       });
     });
 
-    // Submit to backend
+    // Submit to API route
     try {
-      const result = await createWorkout(formDataToSubmit);
-      setActionResult(result);
+      const response = await fetch('/api/v1/apple-watch/workout', {
+        method: 'POST',
+        body: formDataToSubmit,
+      });
+
+      if (response.ok) {
+        const contentType = response.headers.get('Content-Type');
+        
+        if (contentType && contentType.includes('application/octet-stream')) {
+          // Handle binary file download
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${formData.displayName}.workout`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          setActionResult({ success: true, displayName: formData.displayName });
+        } else {
+          // Handle JSON response
+          const result = await response.json();
+          setActionResult(result);
+        }
+      } else {
+        const error = await response.json();
+        setActionResult({ success: false, ...error });
+      }
     } catch (error) {
       console.error('Error creating workout:', error);
+      setActionResult({ success: false, error: 'Failed to create workout' });
     }
   };
 
@@ -180,9 +208,15 @@ export default function WorkoutForm(): JSX.Element {
         {/* Action result display */}
         {actionResult && (
           <div className="mt-8 text-center">
-            <div className="alert alert-success">
-              <span>Workout created successfully!</span>
-            </div>
+            {actionResult.success ? (
+              <div className="alert alert-success">
+                <span>Workout "{actionResult.displayName}" created successfully!</span>
+              </div>
+            ) : (
+              <div className="alert alert-error">
+                <span>Error: {actionResult.error || 'Failed to create workout'}</span>
+              </div>
+            )}
           </div>
         )}
       </div>

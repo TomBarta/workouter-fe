@@ -12,7 +12,7 @@ const config: Config = {
     extend: {
       // Workouter Brand Colors
       colors: {
-        workouter: {
+        wktr: {
           // Primary Brand Colors
           orange: {
             50: '#fff4ed',
@@ -285,7 +285,7 @@ const config: Config = {
       addComponents({
         // Brand button styles
         '.btn-brand': {
-          backgroundColor: theme('colors.workouter.orange.500'),
+          backgroundColor: theme('colors.wktr.orange.500'),
           color: theme('colors.white'),
           fontWeight: theme('fontWeight.semibold'),
           padding: `${theme('spacing.3')} ${theme('spacing.6')}`,
@@ -293,7 +293,7 @@ const config: Config = {
           boxShadow: theme('boxShadow.brand'),
           transition: 'all 0.2s ease',
           '&:hover': {
-            backgroundColor: theme('colors.workouter.orange.600'),
+            backgroundColor: theme('colors.wktr.orange.600'),
             transform: 'translateY(-2px)',
             boxShadow: theme('boxShadow.brand-lg'),
           },
@@ -303,14 +303,14 @@ const config: Config = {
         },
         '.btn-brand-secondary': {
           backgroundColor: 'transparent',
-          color: theme('colors.workouter.orange.500'),
+          color: theme('colors.wktr.orange.500'),
           fontWeight: theme('fontWeight.semibold'),
           padding: `${theme('spacing.3')} ${theme('spacing.6')}`,
           borderRadius: theme('borderRadius.lg'),
-          border: `2px solid ${theme('colors.workouter.orange.500')}`,
+          border: `2px solid ${theme('colors.wktr.orange.500')}`,
           transition: 'all 0.2s ease',
           '&:hover': {
-            backgroundColor: theme('colors.workouter.orange.500'),
+            backgroundColor: theme('colors.wktr.orange.500'),
             color: theme('colors.white'),
             transform: 'translateY(-1px)',
           },
@@ -340,7 +340,7 @@ const config: Config = {
 
         // Brand gradients
         '.bg-brand-gradient': {
-          background: `linear-gradient(135deg, ${theme('colors.workouter.orange.500')} 0%, ${theme('colors.workouter.gold.500')} 50%, #ff4757 100%)`,
+          background: `linear-gradient(135deg, ${theme('colors.wktr.orange.500')} 0%, ${theme('colors.wktr.gold.500')} 50%, #ff4757 100%)`,
         },
 
         '.bg-brand-gradient-dark': {
@@ -349,7 +349,7 @@ const config: Config = {
 
         // Text gradients
         '.text-brand-gradient': {
-          background: `linear-gradient(135deg, ${theme('colors.workouter.orange.500')} 0%, ${theme('colors.workouter.gold.500')} 100%)`,
+          background: `linear-gradient(135deg, ${theme('colors.wktr.orange.500')} 0%, ${theme('colors.wktr.gold.500')} 100%)`,
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           backgroundClip: 'text',
@@ -375,7 +375,7 @@ const config: Config = {
           height: '70%',
           top: '15%',
           left: '15%',
-          borderColor: theme('colors.workouter.orange.500'),
+          borderColor: theme('colors.wktr.orange.500'),
           borderRightColor: 'transparent',
           borderBottomColor: 'transparent',
           transform: 'rotate(-45deg)',
@@ -386,7 +386,7 @@ const config: Config = {
           height: '50%',
           top: '25%',
           left: '25%',
-          borderColor: theme('colors.workouter.gold.500'),
+          borderColor: theme('colors.wktr.gold.500'),
           borderLeftColor: 'transparent',
           borderBottomColor: 'transparent',
           transform: 'rotate(45deg)',

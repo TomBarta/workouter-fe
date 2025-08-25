@@ -3,9 +3,8 @@ import { cleanUpPayload, Payload, setGoal, setWorkoutType } from '@/app/lib/page
 
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.formData()
-    let payload = Object.fromEntries(formData.entries()) as unknown as Payload
-    const goalSelectMenu = formData.get("goalSelectMenu")?.toString()
+    const payload = await request.json() as Payload
+    const goalSelectMenu = payload.goalSelectMenu
 
     // Set workout type
     payload.workoutType = setWorkoutType(goalSelectMenu)

@@ -4,6 +4,7 @@ import {
   SportSelector,
   WorkoutTypeSelector,
   WorkoutNameInput,
+  WorkoutDistance,
   CustomWorkoutBuilder,
   SubmitButton,
   WorkoutFormData,
@@ -30,6 +31,11 @@ export default function WorkoutForm(): JSX.Element {
     blocks: [createDefaultBlock()]
   });
 
+  // Distance goal state
+  const [distanceGoal, setDistanceGoal] = useState<{ distanceValue?: number; distanceUnit?: string }>({
+    distanceUnit: 'm'
+  });
+
   // Update form data
   const updateFormData = (updates: Partial<WorkoutFormData>) => {
     setFormData(prev => ({ ...prev, ...updates }));
@@ -44,38 +50,39 @@ export default function WorkoutForm(): JSX.Element {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Convert form data to the format expected by the backend
-    const formDataToSubmit = new FormData();
+    // Convert form data to JSON payload
+    const payload: Record<string, string> = {
+      activityType: formData.activityType,
+      location: formData.location,
+      displayName: formData.displayName,
+      swimmingLocation: formData.swimmingLocation,
+      workoutType: formData.workoutType,
+      goalSelectMenu: formData.goalSelectMenu || '',
+      targetValue: distanceGoal.distanceValue,
+      unit: distanceGoal.distanceUnit,
+    };
 
-    // Basic workout info
-    formDataToSubmit.append('activityType', formData.activityType);
-    formDataToSubmit.append('location', formData.location);
-    formDataToSubmit.append('displayName', formData.displayName);
-    formDataToSubmit.append('swimmingLocation', formData.swimmingLocation);
-    formDataToSubmit.append('workoutType', formData.workoutType);
-    formDataToSubmit.append('goalSelectMenu', formData.goalSelectMenu || '');
-
-    // Add block and step data
+    // Add block and step data as flattened properties for compatibility with existing backend processing
     formData.blocks.forEach((block, blockIndex) => {
-      formDataToSubmit.append(`block-${blockIndex}-type`, block.type);
-      formDataToSubmit.append(`block-${blockIndex}-iterations`, block.iterations.toString());
+      payload[`block-${blockIndex}-type`] = block.type;
+      payload[`block-${blockIndex}-iterations`] = block.iterations.toString();
 
       block.steps.forEach((step, stepIndex) => {
-        formDataToSubmit.append(`block-${blockIndex}-step-${stepIndex}-purpose`, step.purpose);
+        payload[`block-${blockIndex}-step-${stepIndex}-purpose`] = step.purpose;
 
         if (step.goalType && step.goalType !== 'open') {
-          formDataToSubmit.append(`block-${blockIndex}-step-${stepIndex}-goal-type`, step.goalType);
+          payload[`block-${blockIndex}-step-${stepIndex}-goal-type`] = step.goalType;
 
           if (step.goalType === 'distance') {
-            if (step.distanceValue) formDataToSubmit.append(`block-${blockIndex}-step-${stepIndex}-distance-value`, step.distanceValue.toString());
-            if (step.distanceUnit) formDataToSubmit.append(`block-${blockIndex}-step-${stepIndex}-distance-unit`, step.distanceUnit);
+            if (step.distanceValue) payload[`block-${blockIndex}-step-${stepIndex}-distance-value`] = step.distanceValue.toString();
+            if (step.distanceUnit) payload[`block-${blockIndex}-step-${stepIndex}-distance-unit`] = step.distanceUnit;
           } else if (step.goalType === 'calories') {
-            if (step.caloriesValue) formDataToSubmit.append(`block-${blockIndex}-step-${stepIndex}-calories-value`, step.caloriesValue.toString());
-            if (step.caloriesUnit) formDataToSubmit.append(`block-${blockIndex}-step-${stepIndex}-calories-unit`, step.caloriesUnit);
+            if (step.caloriesValue) payload[`block-${blockIndex}-step-${stepIndex}-calories-value`] = step.caloriesValue.toString();
+            if (step.caloriesUnit) payload[`block-${blockIndex}-step-${stepIndex}-calories-unit`] = step.caloriesUnit;
           } else if (step.goalType === 'time') {
-            if (step.timeHours) formDataToSubmit.append(`block-${blockIndex}-step-${stepIndex}-hrs`, step.timeHours.toString());
-            if (step.timeMinutes) formDataToSubmit.append(`block-${blockIndex}-step-${stepIndex}-min`, step.timeMinutes.toString());
-            if (step.timeSeconds) formDataToSubmit.append(`block-${blockIndex}-step-${stepIndex}-sec`, step.timeSeconds.toString());
+            if (step.timeHours) payload[`block-${blockIndex}-step-${stepIndex}-hrs`] = step.timeHours.toString();
+            if (step.timeMinutes) payload[`block-${blockIndex}-step-${stepIndex}-min`] = step.timeMinutes.toString();
+            if (step.timeSeconds) payload[`block-${blockIndex}-step-${stepIndex}-sec`] = step.timeSeconds.toString();
           }
         }
       });
@@ -85,12 +92,15 @@ export default function WorkoutForm(): JSX.Element {
     try {
       const response = await fetch('/api/v1/apple-watch/workout', {
         method: 'POST',
-        body: formDataToSubmit,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
         const contentType = response.headers.get('Content-Type');
-        
+
         if (contentType && contentType.includes('application/octet-stream')) {
           // Handle binary file download
           const blob = await response.blob();
@@ -150,6 +160,49 @@ export default function WorkoutForm(): JSX.Element {
                       onChange={(value) => updateFormData({ goalSelectMenu: value })}
                     />
                   )}
+                  {formData.goalSelectMenu === 'distance' && (
+                    <WorkoutDistance
+                      distanceValue={distanceGoal.distanceValue}
+                      distanceUnit={distanceGoal.distanceUnit}
+                      onChange={setDistanceGoal}
+                    />
+                  )}
+                  {/* Workout details - show at the end if workout type is selected */}
+                  {formData.goalSelectMenu && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      <WorkoutNameInput
+                        value={formData.displayName}
+                        onChange={(value) => updateFormData({ displayName: value })}
+                      />
+
+                      <div className="form-control w-full">
+                        <div className="flex gap-4">
+                          <label className="label cursor-pointer">
+                            <input
+                              type="radio"
+                              name="location"
+                              value="indoor"
+                              checked={formData.location === 'indoor'}
+                              onChange={(e) => updateFormData({ location: e.target.value as 'indoor' | 'outdoor' })}
+                              className="radio radio-primary"
+                            />
+                            <span className="label-text ml-2">Indoor</span>
+                          </label>
+                          <label className="label cursor-pointer">
+                            <input
+                              type="radio"
+                              name="location"
+                              value="outdoor"
+                              checked={formData.location === 'outdoor'}
+                              onChange={(e) => updateFormData({ location: e.target.value as 'indoor' | 'outdoor' })}
+                              className="radio radio-primary"
+                            />
+                            <span className="label-text ml-2">Outdoor</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -162,36 +215,6 @@ export default function WorkoutForm(): JSX.Element {
                     blocks={formData.blocks}
                     onUpdate={updateBlocks}
                   />
-                </div>
-              </div>
-            )}
-
-            {/* Workout details - show at the end if workout type is selected */}
-            {formData.goalSelectMenu && (
-              <div className="card-workout">
-                <div className="card-body">
-                  <h2 className="card-title text-2xl text-workouter-orange-600 mb-6 font-bold">Workout Details</h2>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    <WorkoutNameInput
-                      value={formData.displayName}
-                      onChange={(value) => updateFormData({ displayName: value })}
-                    />
-
-                    <div className="form-control w-full">
-                      <label className="label">
-                        <span className="label-text text-lg font-semibold text-workouter-black-700">Location</span>
-                      </label>
-                      <select
-                        value={formData.location}
-                        onChange={(e) => updateFormData({ location: e.target.value as 'indoor' | 'outdoor' })}
-                        className="select select-bordered w-full text-lg border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
-                      >
-                        <option value="indoor">Indoor</option>
-                        <option value="outdoor">Outdoor</option>
-                      </select>
-                    </div>
-                  </div>
                 </div>
               </div>
             )}
@@ -210,7 +233,7 @@ export default function WorkoutForm(): JSX.Element {
           <div className="mt-8 text-center">
             {actionResult.success ? (
               <div className="alert alert-success">
-                <span>Workout "{actionResult.displayName}" created successfully!</span>
+                <span>Workout &quot;{actionResult.displayName}&quot; created successfully!</span>
               </div>
             ) : (
               <div className="alert alert-error">

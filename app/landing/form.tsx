@@ -1,17 +1,18 @@
 // Removed server action import - using API route instead
-import { useState, useEffect, useCallback, JSX } from "react";
+import { useState, useEffect, useCallback, JSX, Fragment } from "react";
 import {
   SportSelector,
   WorkoutTypeSelector,
   WorkoutNameInput,
   WorkoutDistance,
+  WorkoutCalorie,
   CustomWorkoutBuilder,
   SubmitButton,
   WorkoutFormData,
   createDefaultBlock,
   Block
 } from "./components";
-import { DistanceUnits } from "@/app/utils/workouts";
+import { DistanceUnits, EnergyUnits } from "@/app/utils/workouts";
 
 // ============================================================================
 // MAIN FORM COMPONENT
@@ -35,6 +36,11 @@ export default function WorkoutForm(): JSX.Element {
   // Distance goal state
   const [distanceGoal, setDistanceGoal] = useState<{ distanceValue?: number; distanceUnit?: DistanceUnits }>({
     distanceUnit: DistanceUnits.meters
+  });
+
+  // Calorie goal state
+  const [calorieGoal, setCalorieGoal] = useState<{ calorieValue?: number; calorieUnit?: EnergyUnits }>({
+    calorieUnit: EnergyUnits.calories
   });
 
   // Update form data
@@ -61,6 +67,9 @@ export default function WorkoutForm(): JSX.Element {
     setDistanceGoal({
       distanceUnit: DistanceUnits.meters
     });
+    setCalorieGoal({
+      calorieUnit: EnergyUnits.calories
+    });
     setActionResult(null);
     setIsFormValid(false);
   };
@@ -77,9 +86,16 @@ export default function WorkoutForm(): JSX.Element {
       swimmingLocation: formData.swimmingLocation,
       workoutType: formData.workoutType,
       goalSelectMenu: formData.goalSelectMenu || '',
-      targetValue: distanceGoal.distanceValue?.toString() || '',
-      unit: distanceGoal.distanceUnit || DistanceUnits.meters,
     };
+
+    // Add goal-specific values
+    if (formData.goalSelectMenu === 'distance') {
+      payload.targetValue = distanceGoal.distanceValue?.toString() || '';
+      payload.unit = distanceGoal.distanceUnit || DistanceUnits.meters;
+    } else if (formData.goalSelectMenu === 'calories') {
+      payload.targetValue = calorieGoal.calorieValue?.toString() || '';
+      payload.unit = calorieGoal.calorieUnit || EnergyUnits.calories;
+    }
 
     // Add block and step data as flattened properties for compatibility with existing backend processing
     formData.blocks.forEach((block, blockIndex) => {
@@ -185,9 +201,16 @@ export default function WorkoutForm(): JSX.Element {
                       onChange={setDistanceGoal}
                     />
                   )}
+                  {formData.goalSelectMenu === 'calories' && (
+                    <WorkoutCalorie
+                      calorieValue={calorieGoal.calorieValue}
+                      calorieUnit={calorieGoal.calorieUnit}
+                      onChange={setCalorieGoal}
+                    />
+                  )}
                   {/* Workout details - show at the end if workout type is selected */}
                   {formData.goalSelectMenu && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <Fragment>
                       <WorkoutNameInput
                         value={formData.displayName}
                         onChange={(value) => updateFormData({ displayName: value })}
@@ -219,7 +242,7 @@ export default function WorkoutForm(): JSX.Element {
                           </label>
                         </div>
                       </div>
-                    </div>
+                    </Fragment>
                   )}
                 </div>
               </div>
@@ -239,33 +262,22 @@ export default function WorkoutForm(): JSX.Element {
 
             {/* Submit button - only show if all required fields are filled */}
             {formData.activityType && formData.goalSelectMenu && (
-              <div className="text-center">
+              <div className="grid grid-cols-1 gap-4 justify-items-center md:justify-items-end">
                 <SubmitButton variant="dark" disabled={!isFormValid} />
+                {actionResult?.success && (
+                    <button
+                      type="button"
+                      onClick={resetForm}
+                      className="btn btn-lg w-full max-w-md bg-wktr-gray-300 text-wktr-black-700 hover:bg-wktr-gray-400 hover:text-wktr-black-800 transition-all duration-200"
+                    >
+                      Reset
+                    </button>
+                )}
               </div>
             )}
           </div>
+          {/* Action result display */}
         </form>
-
-        {/* Action result display */}
-        {actionResult && (
-          <div className="mt-8 text-center space-y-4">
-            {actionResult.success ? (
-              <div className="space-y-4">
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  className="btn btn-lg w-full max-w-md bg-wktr-gray-300 text-wktr-black-700 hover:bg-wktr-gray-400 hover:text-wktr-black-800 transition-all duration-200"
-                >
-                  Reset
-                </button>
-              </div>
-            ) : (
-              <div className="alert alert-error">
-                <span>Error: {actionResult.error || 'Failed to create workout'}</span>
-              </div>
-            )}
-          </div>
-        )}
       </div>
     </div>
   );

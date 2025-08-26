@@ -52,7 +52,25 @@ export interface GoalWithTargetValue {
   type: WorkoutGoalTypes
   targetValue?: number
   targetDuration?: number
-  unit: DistanceUnits | TimeUnits
+  unit: DistanceUnits | TimeUnits | EnergyUnits
+}
+
+export interface DistanceWorkoutGoal {
+  type: WorkoutGoalTypes.distance
+  targetValue: number
+  unit: DistanceUnits
+}
+
+export interface TimeWorkoutGoal {
+  type: WorkoutGoalTypes.time
+  targetDuration: number
+  unit: TimeUnits
+}
+
+export interface EnergyWorkoutGoal {
+  type: WorkoutGoalTypes.energy
+  targetValue: number
+  unit: EnergyUnits
 }
 
 

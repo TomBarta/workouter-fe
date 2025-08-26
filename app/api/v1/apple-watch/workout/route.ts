@@ -3,7 +3,7 @@ import { cleanUpPayload, Payload, setGoal, setWorkoutType } from '@/app/lib/page
 
 export async function POST(request: NextRequest) {
   try {
-    const payload = await request.json() as Payload
+    let payload = await request.json() as Payload
     const goalSelectMenu = payload.goalSelectMenu
 
     // Set workout type
@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     // Set workout goal
     payload.goal = setGoal(payload)
     console.log('payload before cleaning: ', payload)
-    
+
     payload = cleanUpPayload(payload)
     console.log('payload after cleaning: ', payload)
 

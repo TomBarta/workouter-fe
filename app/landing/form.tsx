@@ -11,6 +11,7 @@ import {
   createDefaultBlock,
   Block
 } from "./components";
+import { DistanceUnits } from "@/app/utils/workouts";
 
 // ============================================================================
 // MAIN FORM COMPONENT
@@ -32,8 +33,8 @@ export default function WorkoutForm(): JSX.Element {
   });
 
   // Distance goal state
-  const [distanceGoal, setDistanceGoal] = useState<{ distanceValue?: number; distanceUnit?: string }>({
-    distanceUnit: 'm'
+  const [distanceGoal, setDistanceGoal] = useState<{ distanceValue?: number; distanceUnit?: DistanceUnits }>({
+    distanceUnit: DistanceUnits.meters
   });
 
   // Update form data
@@ -58,8 +59,8 @@ export default function WorkoutForm(): JSX.Element {
       swimmingLocation: formData.swimmingLocation,
       workoutType: formData.workoutType,
       goalSelectMenu: formData.goalSelectMenu || '',
-      targetValue: distanceGoal.distanceValue,
-      unit: distanceGoal.distanceUnit,
+      targetValue: distanceGoal.distanceValue?.toString() || '',
+      unit: distanceGoal.distanceUnit || DistanceUnits.meters,
     };
 
     // Add block and step data as flattened properties for compatibility with existing backend processing
@@ -140,13 +141,13 @@ export default function WorkoutForm(): JSX.Element {
   }, [formData, validateForm]);
 
   return (
-    <div className="min-h-screen bg-brand-gradient py-8">
+    <div className="min-h-screen bg-brand-gradient rounded-lg py-6">
       <div className="container mx-auto px-4">
         <form onSubmit={handleSubmit} className="max-w-1/3 mx-auto">
           <div className="space-y-8">
             {/* Basic workout info */}
             <div className="card-workout">
-              <div className="card-body">
+              <div className="card-body p-0 md:p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <SportSelector
                     value={formData.activityType}
@@ -154,12 +155,11 @@ export default function WorkoutForm(): JSX.Element {
                   />
 
                   {/* Only show workout type selector if a sport is selected */}
-                  {formData.activityType && (
-                    <WorkoutTypeSelector
-                      value={formData.goalSelectMenu || ''}
-                      onChange={(value) => updateFormData({ goalSelectMenu: value })}
-                    />
-                  )}
+                  <WorkoutTypeSelector
+                    value={formData.goalSelectMenu || ''}
+                    onChange={(value) => updateFormData({ goalSelectMenu: value })}
+                    disabled={!formData.activityType}
+                  />
                   {formData.goalSelectMenu === 'distance' && (
                     <WorkoutDistance
                       distanceValue={distanceGoal.distanceValue}
@@ -184,7 +184,7 @@ export default function WorkoutForm(): JSX.Element {
                               value="indoor"
                               checked={formData.location === 'indoor'}
                               onChange={(e) => updateFormData({ location: e.target.value as 'indoor' | 'outdoor' })}
-                              className="radio radio-primary"
+                              className="radio border-wktr-black-950"
                             />
                             <span className="label-text ml-2">Indoor</span>
                           </label>
@@ -195,7 +195,7 @@ export default function WorkoutForm(): JSX.Element {
                               value="outdoor"
                               checked={formData.location === 'outdoor'}
                               onChange={(e) => updateFormData({ location: e.target.value as 'indoor' | 'outdoor' })}
-                              className="radio radio-primary"
+                              className="radio border-wktr-black-950"
                             />
                             <span className="label-text ml-2">Outdoor</span>
                           </label>
@@ -210,7 +210,7 @@ export default function WorkoutForm(): JSX.Element {
             {/* Custom workout builder - only show if custom workout type is selected */}
             {formData.goalSelectMenu === 'custom' && (
               <div className="card-workout">
-                <div className="card-body">
+                <div className="card-body p-0 md:p-6">
                   <CustomWorkoutBuilder
                     blocks={formData.blocks}
                     onUpdate={updateBlocks}

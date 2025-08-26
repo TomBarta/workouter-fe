@@ -5,12 +5,10 @@ import * as actions from '@/app/lib/actions'
 describe('Form to API integration', () => {
   let mockFormData: FormData
   let cleanUpPayloadSpy: any
-  let createWorkoutSpy: any
   
   beforeEach(() => {
     // Create fresh spy for each test to reset mock counts
     cleanUpPayloadSpy = vi.spyOn(pageActionUtils, 'cleanUpPayload')
-    createWorkoutSpy = vi.spyOn(actions, 'createWorkout')
     
     // Mock fetch for API calls
     global.fetch = vi.fn().mockResolvedValue({
@@ -94,4 +92,78 @@ describe('Form to API integration', () => {
     expect(bodyObj).toHaveProperty('location', 'indoor')
     expect(bodyObj).toHaveProperty('workoutType', 'singleGoalWorkout')
   })
+
+  test('should correctly handle distance-based goals from form data', async () => {
+    // Create form data with distance-based goal
+    const distanceFormData = new FormData()
+    distanceFormData.append('displayName', 'Distance Goal Workout')
+    distanceFormData.append('activityType', 'running')
+    distanceFormData.append('location', 'outdoor')
+    distanceFormData.append('goalSelectMenu', 'distance')
+    distanceFormData.append('targetValue', '5.5')
+    distanceFormData.append('unit', 'km')
+    
+    await actions.createWorkout(distanceFormData)
+    
+    // Fetch should have been called with correctly formatted distance-based workout JSON
+    const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][1]
+    const bodyObj = JSON.parse(callArgs.body)
+    
+    // Check that the goal was set correctly
+    expect(bodyObj).toHaveProperty('goal')
+    expect(bodyObj.goal).toHaveProperty('type', 'distance')
+    expect(bodyObj.goal).toHaveProperty('unit', 'km')
+    expect(bodyObj.goal).toHaveProperty('targetValue', '5.5')
+    
+    // Check that the form data was correctly processed
+    expect(bodyObj).toHaveProperty('displayName', 'Distance Goal Workout')
+    expect(bodyObj).toHaveProperty('activityType', 'running')
+    expect(bodyObj).toHaveProperty('location', 'outdoor')
+    expect(bodyObj).toHaveProperty('workoutType', 'singleGoalWorkout')
+  })
+
+  test('should handle complete distance workout form flow', async () => {
+    // Mock the full form submission flow with all required fields
+    const completeDistanceFormData = new FormData()
+    completeDistanceFormData.append('displayName', '5K Morning Run')
+    completeDistanceFormData.append('activityType', 'running')
+    completeDistanceFormData.append('location', 'outdoor')
+    completeDistanceFormData.append('goalSelectMenu', 'distance')
+    completeDistanceFormData.append('targetValue', '5')
+    completeDistanceFormData.append('unit', 'km')
+    completeDistanceFormData.append('swimmingLocation', 'indoors')
+    
+    const result = await actions.createWorkout(completeDistanceFormData)
+    
+    // Verify the result contains expected structure
+    expect(result).toHaveProperty('success', true)
+    expect(result).toHaveProperty('id', '123')
+    
+    // Verify the API was called with correct payload structure
+    const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][1]
+    const bodyObj = JSON.parse(callArgs.body)
+    
+    expect(bodyObj).toMatchObject({
+      displayName: '5K Morning Run',
+      activityType: 'running',
+      location: 'outdoor',
+      workoutType: 'singleGoalWorkout',
+      swimmingLocation: 'indoors',
+      goal: {
+        type: 'distance',
+        unit: 'km',
+        targetValue: '5'
+      }
+    })
+    
+    // Verify cleanUpPayload was called to process the data
+    expect(cleanUpPayloadSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        displayName: '5K Morning Run',
+        activityType: 'running',
+        goalSelectMenu: 'distance'
+      })
+    )
+  })
 })
+

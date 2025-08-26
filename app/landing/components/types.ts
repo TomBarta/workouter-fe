@@ -1,11 +1,13 @@
+import { HKWorkoutActivityType, DistanceUnits, EnergyUnits, WorkoutGoalTypes, IntervalStepPurpose, workoutType } from "@/app/utils/workouts";
+
 export interface Step {
     id: string;
-    purpose: 'work' | 'recovery';
-    goalType?: 'distance' | 'calories' | 'time' | 'open';
+    purpose: IntervalStepPurpose;
+    goalType?: WorkoutGoalTypes;
     distanceValue?: number;
-    distanceUnit?: string;
+    distanceUnit?: DistanceUnits;
     caloriesValue?: number;
-    caloriesUnit?: string;
+    caloriesUnit?: EnergyUnits;
     timeHours?: number;
     timeMinutes?: number;
     timeSeconds?: number;
@@ -19,11 +21,11 @@ export interface Block {
 }
 
 export interface WorkoutFormData {
-    activityType: string;
+    activityType: HKWorkoutActivityType | '';
     location: 'indoor' | 'outdoor';
     displayName: string;
     swimmingLocation: 'indoors';
-    workoutType: string;
+    workoutType: workoutType | '';
     goalSelectMenu?: string;
     blocks: Block[];
 }

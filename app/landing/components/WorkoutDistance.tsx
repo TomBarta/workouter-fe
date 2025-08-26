@@ -1,21 +1,22 @@
 import { JSX } from "react";
+import { DistanceUnits } from "@/app/utils/workouts";
 
 interface WorkoutDistanceProps {
   distanceValue?: number;
-  distanceUnit?: string;
-  onChange: (value: { distanceValue?: number; distanceUnit?: string }) => void;
+  distanceUnit?: DistanceUnits;
+  onChange: (value: { distanceValue?: number; distanceUnit?: DistanceUnits }) => void;
 }
 
 const distanceUnits = [
-  { value: 'yd', label: 'yd' },
-  { value: 'mi', label: 'mi' },
-  { value: 'm', label: 'm' },
-  { value: 'km', label: 'km' },
+  { value: DistanceUnits.yards, label: 'yd' },
+  { value: DistanceUnits.miles, label: 'mi' },
+  { value: DistanceUnits.meters, label: 'm' },
+  { value: DistanceUnits.kilometers, label: 'km' },
 ];
 
 export function WorkoutDistance({
   distanceValue,
-  distanceUnit = 'm',
+  distanceUnit = DistanceUnits.meters,
   onChange
 }: WorkoutDistanceProps): JSX.Element {
   const handleValueChange = (value: string) => {
@@ -24,7 +25,7 @@ export function WorkoutDistance({
   };
 
   const handleUnitChange = (unit: string) => {
-    onChange({ distanceValue, distanceUnit: unit });
+    onChange({ distanceValue, distanceUnit: unit as DistanceUnits });
   };
 
   return (
@@ -38,7 +39,6 @@ export function WorkoutDistance({
             value={distanceValue || ''}
             onChange={(e) => handleValueChange(e.target.value)}
             className="input input-bordered w-full text-lg border-wktr-gray-300 focus:border-wktr-orange-500 focus:ring-2 focus:ring-wktr-orange-500/20 focus:outline-none transition-colors duration-200"
-            placeholder="distance"
           />
         </div>
 

@@ -28,7 +28,7 @@ describe('WorkoutTypeSelector', () => {
         expect(optionTexts).toContain('Distance')
         expect(optionTexts).toContain('Calories')
         expect(optionTexts).toContain('Time')
-        expect(optionTexts).toContain('Custom Interval')
+        expect(optionTexts).toContain('Custom Workout')
     })
 
     test('calls onChange when selection changes', () => {

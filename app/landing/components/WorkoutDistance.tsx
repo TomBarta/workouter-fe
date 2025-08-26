@@ -39,6 +39,8 @@ export function WorkoutDistance({
             value={distanceValue || ''}
             onChange={(e) => handleValueChange(e.target.value)}
             className="input input-bordered w-full text-lg border-wktr-gray-300 focus:border-wktr-orange-500 focus:ring-2 focus:ring-wktr-orange-500/20 focus:outline-none transition-colors duration-200"
+            placeholder="Enter distance"
+            name="distance-value"
           />
         </div>
 

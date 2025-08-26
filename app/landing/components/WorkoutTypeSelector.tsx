@@ -19,7 +19,7 @@ export const WorkoutTypeSelector = ({ value, onChange, disabled = false }: Worko
                 <option value="distance">Distance</option>
                 <option value="calories">Calories</option>
                 <option value="time">Time</option>
-                <option value="custom">Custom Interval</option>
+                <option value="custom">Custom Workout</option>
             </select>
         </label>
     </div>

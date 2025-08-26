@@ -47,6 +47,24 @@ export default function WorkoutForm(): JSX.Element {
     updateFormData({ blocks });
   };
 
+  // Reset form to initial state
+  const resetForm = () => {
+    setFormData({
+      activityType: '',
+      location: 'indoor',
+      displayName: '',
+      swimmingLocation: 'indoors',
+      workoutType: '',
+      goalSelectMenu: '',
+      blocks: [createDefaultBlock()]
+    });
+    setDistanceGoal({
+      distanceUnit: DistanceUnits.meters
+    });
+    setActionResult(null);
+    setIsFormValid(false);
+  };
+
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -220,9 +238,9 @@ export default function WorkoutForm(): JSX.Element {
             )}
 
             {/* Submit button - only show if all required fields are filled */}
-            {formData.activityType && formData.goalSelectMenu && formData.displayName && (
+            {formData.activityType && formData.goalSelectMenu && (
               <div className="text-center">
-                <SubmitButton disabled={!isFormValid} />
+                <SubmitButton variant="dark" disabled={!isFormValid} />
               </div>
             )}
           </div>
@@ -230,10 +248,16 @@ export default function WorkoutForm(): JSX.Element {
 
         {/* Action result display */}
         {actionResult && (
-          <div className="mt-8 text-center">
+          <div className="mt-8 text-center space-y-4">
             {actionResult.success ? (
-              <div className="alert alert-success">
-                <span>Workout &quot;{actionResult.displayName}&quot; created successfully!</span>
+              <div className="space-y-4">
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="btn btn-lg w-full max-w-md bg-wktr-gray-300 text-wktr-black-700 hover:bg-wktr-gray-400 hover:text-wktr-black-800 transition-all duration-200"
+                >
+                  Reset
+                </button>
               </div>
             ) : (
               <div className="alert alert-error">

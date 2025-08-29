@@ -96,16 +96,22 @@ describe('WorkoutTime', () => {
     const secondsInput = screen.getByPlaceholderText(/sec/i)
     
     expect(hoursInput.getAttribute('type')).toBe('number')
+    expect(hoursInput.getAttribute('inputmode')).toBe('numeric')
+    expect(hoursInput.getAttribute('pattern')).toBe('[0-9]*')
     expect(hoursInput.getAttribute('step')).toBe('1')
     expect(hoursInput.getAttribute('min')).toBe('0')
     expect(hoursInput.getAttribute('max')).toBe('23')
     
     expect(minutesInput.getAttribute('type')).toBe('number')
+    expect(minutesInput.getAttribute('inputmode')).toBe('numeric')
+    expect(minutesInput.getAttribute('pattern')).toBe('[0-9]*')
     expect(minutesInput.getAttribute('step')).toBe('1')
     expect(minutesInput.getAttribute('min')).toBe('0')
     expect(minutesInput.getAttribute('max')).toBe('59')
     
     expect(secondsInput.getAttribute('type')).toBe('number')
+    expect(secondsInput.getAttribute('inputmode')).toBe('numeric')
+    expect(secondsInput.getAttribute('pattern')).toBe('[0-9]*')
     expect(secondsInput.getAttribute('step')).toBe('1')
     expect(secondsInput.getAttribute('min')).toBe('0')
     expect(secondsInput.getAttribute('max')).toBe('59')

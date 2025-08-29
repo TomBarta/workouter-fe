@@ -107,6 +107,8 @@ describe('WorkoutCalorie', () => {
     
     const input = screen.getByPlaceholderText(/calories/i)
     expect(input.getAttribute('type')).toBe('number')
+    expect(input.getAttribute('inputmode')).toBe('numeric')
+    expect(input.getAttribute('pattern')).toBe('[0-9]*')
     expect(input.getAttribute('step')).toBe('1')
     expect(input.getAttribute('min')).toBe('0')
   })

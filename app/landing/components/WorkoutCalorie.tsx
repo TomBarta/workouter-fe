@@ -32,6 +32,8 @@ export function WorkoutCalorie({
         <div className="flex-1">
           <input
             type="number"
+            inputMode="numeric"
+            pattern="[0-9]*"
             step="1"
             min="0"
             value={calorieValue || ''}

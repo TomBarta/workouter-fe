@@ -34,6 +34,8 @@ export function WorkoutTime({
         <div className="flex-1">
           <input
             type="number"
+            inputMode="numeric"
+            pattern="[0-9]*"
             step="1"
             min="0"
             max="23"
@@ -47,6 +49,8 @@ export function WorkoutTime({
         <div className="flex-1">
           <input
             type="number"
+            inputMode="numeric"
+            pattern="[0-9]*"
             step="1"
             min="0"
             max="59"
@@ -60,6 +64,8 @@ export function WorkoutTime({
         <div className="flex-1">
           <input
             type="number"
+            inputMode="numeric"
+            pattern="[0-9]*"
             step="1"
             min="0"
             max="59"

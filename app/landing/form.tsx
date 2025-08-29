@@ -6,6 +6,7 @@ import {
   WorkoutNameInput,
   WorkoutDistance,
   WorkoutCalorie,
+  WorkoutTime,
   CustomWorkoutBuilder,
   SubmitButton,
   WorkoutFormData,
@@ -43,6 +44,9 @@ export default function WorkoutForm(): JSX.Element {
     calorieUnit: EnergyUnits.calories
   });
 
+  // Time goal state
+  const [timeGoal, setTimeGoal] = useState<{ timeHours?: number; timeMinutes?: number; timeSeconds?: number }>({});
+
   // Update form data
   const updateFormData = (updates: Partial<WorkoutFormData>) => {
     setFormData(prev => ({ ...prev, ...updates }));
@@ -70,6 +74,7 @@ export default function WorkoutForm(): JSX.Element {
     setCalorieGoal({
       calorieUnit: EnergyUnits.calories
     });
+    setTimeGoal({});
     setActionResult(null);
     setIsFormValid(false);
   };
@@ -95,6 +100,10 @@ export default function WorkoutForm(): JSX.Element {
     } else if (formData.goalSelectMenu === 'calories') {
       payload.targetValue = calorieGoal.calorieValue?.toString() || '';
       payload.unit = calorieGoal.calorieUnit || EnergyUnits.calories;
+    } else if (formData.goalSelectMenu === 'time') {
+      payload.hrs = timeGoal.timeHours?.toString() || '0';
+      payload.min = timeGoal.timeMinutes?.toString() || '0';
+      payload.sec = timeGoal.timeSeconds?.toString() || '0';
     }
 
     // Add block and step data as flattened properties for compatibility with existing backend processing
@@ -206,6 +215,14 @@ export default function WorkoutForm(): JSX.Element {
                       calorieValue={calorieGoal.calorieValue}
                       calorieUnit={calorieGoal.calorieUnit}
                       onChange={setCalorieGoal}
+                    />
+                  )}
+                  {formData.goalSelectMenu === 'time' && (
+                    <WorkoutTime
+                      timeHours={timeGoal.timeHours}
+                      timeMinutes={timeGoal.timeMinutes}
+                      timeSeconds={timeGoal.timeSeconds}
+                      onChange={setTimeGoal}
                     />
                   )}
                   {/* Workout details - show at the end if workout type is selected */}

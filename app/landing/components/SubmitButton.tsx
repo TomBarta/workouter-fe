@@ -8,7 +8,7 @@ interface SubmitButtonProps {
 export const SubmitButton = ({ disabled = true, variant = 'light' }: SubmitButtonProps): JSX.Element => {
     const getButtonClasses = () => {
         if (disabled) {
-            return 'bg-workouter-gray-400 text-workouter-gray-600 cursor-not-allowed';
+            return 'bg-wktr-gray-400 text-wktr-gray-600 cursor-not-allowed';
         }
 
         if (variant === 'dark') {

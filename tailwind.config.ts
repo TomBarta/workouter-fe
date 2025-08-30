@@ -377,7 +377,6 @@ const config: Config = {
           transition: 'all 0.2s ease',
           '&:hover': {
             boxShadow: theme('boxShadow.lg'),
-            transform: 'translateY(-2px)',
           },
         },
 

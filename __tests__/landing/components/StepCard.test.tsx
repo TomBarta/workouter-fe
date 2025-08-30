@@ -315,7 +315,7 @@ describe('StepCard', () => {
         )
 
         const stepCard = container.firstChild as HTMLElement
-        expect(stepCard.className).toContain('border-workouter-gray-300')
+        expect(stepCard.className).toContain('border-wktr-gray-300')
     })
 
     test('has correct CSS classes for recovery step', () => {
@@ -331,7 +331,7 @@ describe('StepCard', () => {
         )
 
         const stepCard = container.firstChild as HTMLElement
-        expect(stepCard.className).toContain('border-workouter-gold-300')
-        expect(stepCard.className).toContain('bg-workouter-gold-50')
+        expect(stepCard.className).toContain('border-wktr-gold-300')
+        expect(stepCard.className).toContain('bg-wktr-gold-50')
     })
 })

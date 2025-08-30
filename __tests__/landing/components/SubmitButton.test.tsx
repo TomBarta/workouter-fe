@@ -65,7 +65,7 @@ describe('SubmitButton', () => {
         expect(button?.className).toContain('btn')
         expect(button?.className).toContain('btn-lg')
         expect(button?.className).toContain('w-full')
-        expect(button?.className).toContain('bg-workouter-gray-400')
+        expect(button?.className).toContain('bg-wktr-gray-400')
     })
 
     test('has correct CSS classes when disabled by default', () => {
@@ -75,7 +75,7 @@ describe('SubmitButton', () => {
         expect(button?.className).toContain('btn')
         expect(button?.className).toContain('btn-lg')
         expect(button?.className).toContain('w-full')
-        expect(button?.className).toContain('bg-workouter-gray-400')
+        expect(button?.className).toContain('bg-wktr-gray-400')
     })
 
     test('has correct container classes', () => {

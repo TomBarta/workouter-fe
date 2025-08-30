@@ -186,8 +186,8 @@ export default function WorkoutForm(): JSX.Element {
                       onChange={setTimeGoal}
                     />
                   )}
-                  {/* Workout details - show at the end if workout type is selected */}
-                  {formData.goalSelectMenu && (
+                  {/* Workout details - show at the end if workout type is selected but not custom */}
+                  {formData.goalSelectMenu && formData.goalSelectMenu !== 'custom' && (
                     <Fragment>
                       <WorkoutNameInput
                         value={formData.displayName}
@@ -229,12 +229,10 @@ export default function WorkoutForm(): JSX.Element {
             {/* Custom workout builder - only show if custom workout type is selected */}
             {formData.goalSelectMenu === 'custom' && (
               <div className="card-workout">
-                <div className="card-body p-0 md:p-6">
-                  <CustomWorkoutBuilder
-                    blocks={formData.blocks}
-                    onUpdate={updateBlocks}
-                  />
-                </div>
+                <CustomWorkoutBuilder
+                  blocks={formData.blocks}
+                  onUpdate={updateBlocks}
+                />
               </div>
             )}
 
@@ -243,13 +241,13 @@ export default function WorkoutForm(): JSX.Element {
               <div className="grid grid-cols-1 gap-4 justify-items-center md:justify-items-end">
                 <SubmitButton variant="dark" disabled={!isFormValid} />
                 {actionResult?.success && (
-                    <button
-                      type="button"
-                      onClick={resetForm}
-                      className="btn btn-lg w-full max-w-md bg-wktr-gray-300 text-wktr-black-700 hover:bg-wktr-gray-400 hover:text-wktr-black-800 transition-all duration-200"
-                    >
-                      Reset
-                    </button>
+                  <button
+                    type="button"
+                    onClick={resetForm}
+                    className="btn btn-lg w-full max-w-md bg-wktr-gray-300 text-wktr-black-700 hover:bg-wktr-gray-400 hover:text-wktr-black-800 transition-all duration-200"
+                  >
+                    Reset
+                  </button>
                 )}
               </div>
             )}

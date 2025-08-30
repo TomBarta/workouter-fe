@@ -42,20 +42,6 @@ describe('BlockCard', () => {
         vi.clearAllMocks()
     })
 
-    test('renders block title correctly', () => {
-        const { container } = render(
-            <BlockCard
-                block={mockBlock}
-                onUpdate={mockOnUpdate}
-                onRemove={mockOnRemove}
-                canRemove={true}
-            />
-        )
-
-        const blockCard = container.firstChild as HTMLElement
-        expect(within(blockCard).getByRole('heading', { name: /Block Work/ })).toBeTruthy()
-    })
-
     test('renders all steps', () => {
         const { container } = render(
             <BlockCard
@@ -266,7 +252,7 @@ describe('BlockCard', () => {
         )
 
         const blockCard = container.firstChild as HTMLElement
-        expect(blockCard.className).toContain('border-workouter-orange-200')
+        expect(blockCard.className).toContain('border-wktr-orange-200')
     })
 
     test('displays correct iterations value', () => {

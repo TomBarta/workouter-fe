@@ -1,5 +1,9 @@
-import { DistanceUnits, EnergyUnits } from "@/app/utils/workouts";
+import { DistanceUnits, EnergyUnits, WorkoutGoalTypes, IntervalStepPurpose } from "@/app/utils/workouts";
 import { Step } from "./types";
+import { WorkoutDistance } from "./WorkoutDistance";
+import { WorkoutCalorie } from "./WorkoutCalorie";
+import { WorkoutTime } from "./WorkoutTime";
+import { JSX } from "react";
 
 interface StepCardProps {
     step: Step;
@@ -19,17 +23,17 @@ export const StepCard = ({
     };
 
     return (
-        <div className={`card-workout ${step.purpose === 'recovery'
-            ? 'border-workouter-gold-300 bg-workouter-gold-50'
-            : 'border-workouter-gray-300'
+        <div className={`card-workout h-80 ${step.purpose === IntervalStepPurpose.recovery
+            ? 'border-wktr-blue-300'
+            : 'border-wktr-orange-300'
             }`}>
-            <div className="card-body p-4">
+            <div>
                 <div className="flex justify-between items-start mb-3">
-                    <h4 className={`card-title text-lg font-semibold ${step.purpose === 'recovery'
-                        ? 'text-workouter-gold-700'
-                        : 'text-workouter-black-900'
+                    <h4 className={`card-title text-lg font-semibold ${step.purpose === IntervalStepPurpose.recovery
+                        ? 'text-wktr-gold-700'
+                        : 'text-wktr-black-900'
                         }`}>
-                        {step.purpose === 'recovery' ? 'Recovery' : 'Work'}
+                        {step.purpose === IntervalStepPurpose.recovery ? 'Recovery' : 'Work'}
                     </h4>
                     {canRemove && (
                         <button
@@ -44,161 +48,100 @@ export const StepCard = ({
 
                 {/* Purpose selector */}
                 <div className="form-control mb-4">
-                    <label className="label">
-                        <span className="label-text font-medium text-workouter-black-700">Purpose</span>
-                    </label>
                     <div className="flex gap-4">
                         <label className="label cursor-pointer gap-2">
                             <input
                                 type="radio"
-                                checked={step.purpose === 'work'}
-                                onChange={() => updateStep({ purpose: 'work' })}
-                                className="radio radio-primary border-workouter-gray-300 checked:border-workouter-orange-500 checked:bg-workouter-orange-500"
+                                checked={step.purpose === IntervalStepPurpose.work}
+                                onChange={() => updateStep({ purpose: IntervalStepPurpose.work })}
+                                className="radio radio-primary border-wktr-gray-300 checked:border-wktr-orange-500 checked:bg-wktr-orange-500"
                             />
-                            <span className="label-text text-workouter-black-600">Work</span>
+                            <span className="label-text text-wktr-black-600">Work</span>
                         </label>
                         <label className="label cursor-pointer gap-2">
                             <input
                                 type="radio"
-                                checked={step.purpose === 'recovery'}
-                                onChange={() => updateStep({ purpose: 'recovery' })}
-                                className="radio radio-primary border-workouter-gray-300 checked:border-workouter-orange-500 checked:bg-workouter-orange-500"
+                                checked={step.purpose === IntervalStepPurpose.recovery}
+                                onChange={() => updateStep({ purpose: IntervalStepPurpose.recovery })}
+                                className="radio radio-primary border-wktr-gray-300 checked:border-wktr-blue-500 checked:bg-wktr-blue-500"
                             />
-                            <span className="label-text text-workouter-black-600">Recovery</span>
+                            <span className="label-text text-wktr-black-600">Recovery</span>
                         </label>
                     </div>
                 </div>
 
                 {/* Goal inputs for work steps */}
-                {step.purpose === 'work' && (
+                {step.purpose === IntervalStepPurpose.work && (
                     <div className="space-y-4">
                         <div className="form-control">
                             <label className="label">
-                                <span className="label-text font-medium text-workouter-black-700">Goal Type</span>
+                                <span className="label-text font-medium text-wktr-black-700">Goal Type</span>
                             </label>
                             <select
                                 value={step.goalType || ''}
-                                onChange={(e) => updateStep({ goalType: e.target.value as 'distance' | 'calories' | 'time' | 'open' })}
-                                className="select select-bordered w-full border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
+                                onChange={(e) => updateStep({ goalType: e.target.value as WorkoutGoalTypes })}
+                                className="select select-bordered w-full border-wktr-gray-300 focus:border-wktr-orange-500 focus:ring-2 focus:ring-wktr-orange-500/20 focus:outline-none transition-colors duration-200"
                             >
                                 <option value="">Select goal...</option>
-                                <option value="open">Open</option>
-                                <option value="distance">Distance</option>
-                                <option value="calories">Calories</option>
-                                <option value="time">Time</option>
+                                <option value={WorkoutGoalTypes.open}>Open</option>
+                                <option value={WorkoutGoalTypes.distance}>Distance</option>
+                                <option value={WorkoutGoalTypes.energy}>Calories</option>
+                                <option value={WorkoutGoalTypes.time}>Time</option>
                             </select>
                         </div>
 
                         {/* Distance goal */}
-                        {step.goalType === 'distance' && (
-                            <div className="flex gap-2">
-                                <input
-                                    type="number"
-                                    min={0}
-                                    step="0.1"
-                                    placeholder="Distance"
-                                    value={step.distanceValue || ''}
-                                    onChange={(e) => updateStep({ distanceValue: parseFloat(e.target.value) || undefined })}
-                                    className="input input-bordered flex-1 border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
-                                />
-                                <select
-                                    value={step.distanceUnit || ''}
-                                    onChange={(e) => updateStep({ distanceUnit: e.target.value })}
-                                    className="select select-bordered w-32 border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
-                                >
-                                    <option value="">Unit</option>
-                                    <option value={DistanceUnits.miles}>Miles</option>
-                                    <option value={DistanceUnits.kilometers}>Kilometers</option>
-                                    <option value={DistanceUnits.yards}>Yards</option>
-                                    <option value={DistanceUnits.meters}>Meters</option>
-                                </select>
-                            </div>
+                        {step.goalType === WorkoutGoalTypes.distance && (
+                            <WorkoutDistance
+                                distanceValue={step.distanceValue}
+                                distanceUnit={step.distanceUnit as DistanceUnits}
+                                onChange={({ distanceValue, distanceUnit }) =>
+                                    updateStep({ distanceValue, distanceUnit })
+                                }
+                            />
                         )}
 
                         {/* Calories goal */}
-                        {step.goalType === 'calories' && (
-                            <div className="flex gap-2">
-                                <input
-                                    type="number"
-                                    min={0}
-                                    placeholder="Calories"
-                                    value={step.caloriesValue || ''}
-                                    onChange={(e) => updateStep({ caloriesValue: parseInt(e.target.value) || undefined })}
-                                    className="input input-bordered flex-1 border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
-                                />
-                                <select
-                                    value={step.caloriesUnit || ''}
-                                    onChange={(e) => updateStep({ caloriesUnit: e.target.value })}
-                                    className="select select-bordered w-32 border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
-                                >
-                                    <option value="">Unit</option>
-                                    <option value={EnergyUnits.calories}>Calories</option>
-                                    <option value={EnergyUnits.kilocalories}>Kilocalories</option>
-                                </select>
-                            </div>
+                        {step.goalType === WorkoutGoalTypes.energy && (
+                            <WorkoutCalorie
+                                calorieValue={step.caloriesValue}
+                                calorieUnit={step.caloriesUnit as EnergyUnits}
+                                onChange={({ calorieValue, calorieUnit }) =>
+                                    updateStep({ caloriesValue: calorieValue, caloriesUnit: calorieUnit })
+                                }
+                            />
                         )}
 
                         {/* Time goal */}
-                        {step.goalType === 'time' && (
-                            <div className="flex gap-2">
-                                <input
-                                    type="number"
-                                    min={0}
-                                    max={23}
-                                    placeholder="Hours"
-                                    value={step.timeHours || ''}
-                                    onChange={(e) => updateStep({ timeHours: parseInt(e.target.value) || undefined })}
-                                    className="input input-bordered w-20 border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
-                                />
-                                <input
-                                    type="number"
-                                    min={0}
-                                    max={59}
-                                    placeholder="Minutes"
-                                    value={step.timeMinutes || ''}
-                                    onChange={(e) => updateStep({ timeMinutes: parseInt(e.target.value) || undefined })}
-                                    className="input input-bordered w-20 border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
-                                />
-                                <input
-                                    type="number"
-                                    min={0}
-                                    max={59}
-                                    placeholder="Seconds"
-                                    value={step.timeSeconds || ''}
-                                    onChange={(e) => updateStep({ timeSeconds: parseInt(e.target.value) || undefined })}
-                                    className="input input-bordered w-20 border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
-                                />
-                            </div>
+                        {step.goalType === WorkoutGoalTypes.time && (
+                            <WorkoutTime
+                                timeHours={step.timeHours}
+                                showHours={false}
+                                timeMinutes={step.timeMinutes}
+                                timeSeconds={step.timeSeconds}
+                                onChange={({ timeHours, timeMinutes, timeSeconds }) =>
+                                    updateStep({ timeHours, timeMinutes, timeSeconds })
+                                }
+                            />
                         )}
                     </div>
                 )}
 
                 {/* Recovery time input */}
-                {step.purpose === 'recovery' && (
+                {step.purpose === IntervalStepPurpose.recovery && (
                     <div className="form-control">
                         <label className="label">
-                            <span className="label-text font-medium text-workouter-black-700">Recovery Duration</span>
+                            <span className="label-text font-medium text-wktr-black-700">Recovery Duration</span>
                         </label>
-                        <div className="flex gap-2">
-                            <input
-                                type="number"
-                                min={0}
-                                max={59}
-                                placeholder="Minutes"
-                                value={step.timeMinutes || ''}
-                                onChange={(e) => updateStep({ timeMinutes: parseInt(e.target.value) || undefined })}
-                                className="input input-bordered w-20 border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
-                            />
-                            <input
-                                type="number"
-                                min={0}
-                                max={59}
-                                placeholder="Seconds"
-                                value={step.timeSeconds || ''}
-                                onChange={(e) => updateStep({ timeSeconds: parseInt(e.target.value) || undefined })}
-                                className="input input-bordered w-20 border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
-                            />
-                        </div>
+                        <WorkoutTime
+                            timeHours={step.timeHours}
+                            timeMinutes={step.timeMinutes}
+                            timeSeconds={step.timeSeconds}
+                            showHours={false}
+                            onChange={({ timeHours, timeMinutes, timeSeconds }) =>
+                                updateStep({ timeHours, timeMinutes, timeSeconds })
+                            }
+                        />
                     </div>
                 )}
             </div>

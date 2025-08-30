@@ -12,7 +12,7 @@ export const WorkoutNameInput = ({ value, onChange }: WorkoutNameInputProps): JS
                 placeholder="Workout name"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                className="input input-bordered w-full text-lg border-workouter-gray-300 focus:border-workouter-orange-500 focus:ring-2 focus:ring-workouter-orange-500/20 focus:outline-none transition-colors duration-200"
+                className="input input-bordered w-full text-lg border-wktr-gray-300 focus:border-wktr-orange-500 focus:ring-2 focus:ring-wktr-orange-500/20 focus:outline-none transition-colors duration-200"
                 required
             />
         </label>

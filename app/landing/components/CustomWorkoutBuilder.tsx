@@ -31,10 +31,9 @@ export const CustomWorkoutBuilder = ({
 
     return (
         <div className="w-full max-w-4xl">
-            <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-workouter-orange-600 mb-4">Custom Workout Builder</h2>
-                <p className="text-workouter-black-600">
-                    Create your workout by adding blocks and steps. Each block can be repeated multiple times.
+            <div className="text-center">
+                <p className="text-wktr-black-600 font-bold">
+                    Add blocks and steps. <br /> Each block can repeat.
                 </p>
             </div>
 

@@ -14,7 +14,7 @@ import {
   Block
 } from "./components";
 import { createWorkoutPayload, type WorkoutGoals } from '@/app/lib/pageActionUtils';
-import { DistanceUnits, EnergyUnits } from "@/app/utils/workouts";
+import { DistanceUnits, EnergyUnits, IntervalStepPurpose, WorkoutGoalTypes } from "@/app/utils/workouts";
 
 // ============================================================================
 // MAIN FORM COMPONENT
@@ -135,9 +135,24 @@ export default function WorkoutForm(): JSX.Element {
 
   // Validate form
   const validateForm = useCallback(() => {
-    const isValid = Boolean(formData.activityType && formData.displayName &&
-      (formData.goalSelectMenu !== 'custom' || formData.blocks.length > 0));
-    setIsFormValid(isValid);
+    if (formData.goalSelectMenu === 'custom') {
+      // For custom workouts, check if there's at least one work step with a valid goal AND displayName
+      const hasValidWorkStep = formData.blocks.some(block => 
+        block.steps.some(step => 
+          step.purpose === IntervalStepPurpose.work && step.goalType && 
+          (step.goalType === WorkoutGoalTypes.open || 
+           step.goalType === WorkoutGoalTypes.distance || 
+           step.goalType === WorkoutGoalTypes.energy || 
+           step.goalType === WorkoutGoalTypes.time)
+        )
+      );
+      const isValid = Boolean(formData.activityType && formData.displayName && hasValidWorkStep);
+      setIsFormValid(isValid);
+    } else {
+      // For non-custom workouts, require displayName
+      const isValid = Boolean(formData.activityType && formData.displayName);
+      setIsFormValid(isValid);
+    }
   }, [formData]);
 
   useEffect(() => {
@@ -186,8 +201,8 @@ export default function WorkoutForm(): JSX.Element {
                       onChange={setTimeGoal}
                     />
                   )}
-                  {/* Workout details - show at the end if workout type is selected but not custom */}
-                  {formData.goalSelectMenu && formData.goalSelectMenu !== 'custom' && (
+                  {/* Workout details - show at the end if workout type is selected */}
+                  {formData.goalSelectMenu && (
                     <Fragment>
                       <WorkoutNameInput
                         value={formData.displayName}

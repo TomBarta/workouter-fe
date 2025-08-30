@@ -32,7 +32,7 @@ export const CustomWorkoutBuilder = ({
     return (
         <div className="w-full max-w-4xl">
             <div className="text-center">
-                <p className="text-wktr-black-600 font-bold">
+                <p className="text-wktr-black-600 font-bold pb-8">
                     Add blocks and steps. <br /> Each block can repeat.
                 </p>
             </div>

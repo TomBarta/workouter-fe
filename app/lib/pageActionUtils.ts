@@ -1,4 +1,37 @@
-import { WorkoutGoalTypes, WorkoutPlan, workoutType, IntervalBlock } from "../utils/workouts"
+import { WorkoutGoalTypes, WorkoutPlan, workoutType, IntervalBlock, IntervalStepPurpose, DistanceUnits, EnergyUnits } from "../utils/workouts"
+
+// Types for form data
+export interface WorkoutGoals {
+    distance?: { distanceValue?: number; distanceUnit?: DistanceUnits }
+    calories?: { calorieValue?: number; calorieUnit?: EnergyUnits }
+    time?: { timeHours?: number; timeMinutes?: number; timeSeconds?: number }
+}
+
+export interface FormBlock {
+    type: 'work' | 'recovery'
+    iterations: number
+    steps: Array<{
+        purpose: string
+        goalType?: string
+        distanceValue?: number
+        distanceUnit?: string
+        caloriesValue?: number
+        caloriesUnit?: string
+        timeHours?: number
+        timeMinutes?: number
+        timeSeconds?: number
+    }>
+}
+
+export interface WorkoutFormData {
+    activityType: string
+    location: 'indoor' | 'outdoor'
+    displayName: string
+    swimmingLocation: 'indoors'
+    workoutType: string
+    goalSelectMenu?: string
+    blocks: FormBlock[]
+}
 
 export interface Payload extends WorkoutPlan {
     swimmingLocation: 'indoors'
@@ -9,6 +42,107 @@ export interface Payload extends WorkoutPlan {
     unit?: string
     targetValue?: number
     [key: string]: any // Allow dynamic properties for step data
+}
+
+/**
+ * Creates a workout payload from form data and goals, supporting both nested and flat formats
+ */
+export function createWorkoutPayload(
+    formData: WorkoutFormData, 
+    goals: WorkoutGoals,
+    useNestedFormat = true
+): Payload {
+    const payload: Payload = {
+        activityType: formData.activityType,
+        location: formData.location,
+        displayName: formData.displayName,
+        swimmingLocation: formData.swimmingLocation,
+        workoutType: formData.workoutType,
+        goalSelectMenu: formData.goalSelectMenu || '',
+    };
+
+    // Add goal-specific values
+    if (formData.goalSelectMenu === 'distance' && goals.distance) {
+        payload.targetValue = goals.distance.distanceValue?.toString() || '';
+        payload.unit = goals.distance.distanceUnit || DistanceUnits.meters;
+    } else if (formData.goalSelectMenu === 'calories' && goals.calories) {
+        payload.targetValue = goals.calories.calorieValue?.toString() || '';
+        payload.unit = goals.calories.calorieUnit || EnergyUnits.calories;
+    } else if (formData.goalSelectMenu === 'time' && goals.time) {
+        payload.hrs = goals.time.timeHours?.toString() || '0';
+        payload.min = goals.time.timeMinutes?.toString() || '0';
+        payload.sec = goals.time.timeSeconds?.toString() || '0';
+    }
+
+    // Add block and step data
+    if (useNestedFormat) {
+        // Use nested object format
+        payload.blocks = formData.blocks.map(block => ({
+            type: block.type,
+            iterations: block.iterations,
+            steps: block.steps.map(step => {
+                const stepData: {
+                    purpose: string
+                    goalType?: string
+                    distanceValue?: number
+                    distanceUnit?: string
+                    caloriesValue?: number
+                    caloriesUnit?: string
+                    timeHours?: number
+                    timeMinutes?: number
+                    timeSeconds?: number
+                } = {
+                    purpose: step.purpose
+                };
+
+                if (step.goalType && step.goalType !== 'open') {
+                    stepData.goalType = step.goalType;
+
+                    if (step.goalType === 'distance') {
+                        if (step.distanceValue) stepData.distanceValue = step.distanceValue;
+                        if (step.distanceUnit) stepData.distanceUnit = step.distanceUnit;
+                    } else if (step.goalType === 'calories') {
+                        if (step.caloriesValue) stepData.caloriesValue = step.caloriesValue;
+                        if (step.caloriesUnit) stepData.caloriesUnit = step.caloriesUnit;
+                    } else if (step.goalType === 'time') {
+                        if (step.timeHours) stepData.timeHours = step.timeHours;
+                        if (step.timeMinutes) stepData.timeMinutes = step.timeMinutes;
+                        if (step.timeSeconds) stepData.timeSeconds = step.timeSeconds;
+                    }
+                }
+
+                return stepData;
+            })
+        }));
+    } else {
+        // Use flat format for backward compatibility
+        formData.blocks.forEach((block, blockIndex) => {
+            payload[`block-${blockIndex}-type`] = block.type;
+            payload[`block-${blockIndex}-iterations`] = block.iterations.toString();
+
+            block.steps.forEach((step, stepIndex) => {
+                payload[`block-${blockIndex}-step-${stepIndex}-purpose`] = step.purpose;
+
+                if (step.goalType && step.goalType !== 'open') {
+                    payload[`block-${blockIndex}-step-${stepIndex}-goal-type`] = step.goalType;
+
+                    if (step.goalType === 'distance') {
+                        if (step.distanceValue) payload[`block-${blockIndex}-step-${stepIndex}-distance-value`] = step.distanceValue.toString();
+                        if (step.distanceUnit) payload[`block-${blockIndex}-step-${stepIndex}-distance-unit`] = step.distanceUnit;
+                    } else if (step.goalType === 'calories') {
+                        if (step.caloriesValue) payload[`block-${blockIndex}-step-${stepIndex}-calories-value`] = step.caloriesValue.toString();
+                        if (step.caloriesUnit) payload[`block-${blockIndex}-step-${stepIndex}-calories-unit`] = step.caloriesUnit;
+                    } else if (step.goalType === 'time') {
+                        if (step.timeHours) payload[`block-${blockIndex}-step-${stepIndex}-hrs`] = step.timeHours.toString();
+                        if (step.timeMinutes) payload[`block-${blockIndex}-step-${stepIndex}-min`] = step.timeMinutes.toString();
+                        if (step.timeSeconds) payload[`block-${blockIndex}-step-${stepIndex}-sec`] = step.timeSeconds.toString();
+                    }
+                }
+            });
+        });
+    }
+
+    return payload;
 }
 
 export function setWorkoutType(goalSelectMenu: string | undefined) {

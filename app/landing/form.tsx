@@ -13,6 +13,7 @@ import {
   createDefaultBlock,
   Block
 } from "./components";
+import { createWorkoutPayload, type WorkoutGoals } from '@/app/lib/pageActionUtils';
 import { DistanceUnits, EnergyUnits } from "@/app/utils/workouts";
 
 // ============================================================================
@@ -83,54 +84,14 @@ export default function WorkoutForm(): JSX.Element {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Convert form data to JSON payload
-    const payload: Record<string, string> = {
-      activityType: formData.activityType,
-      location: formData.location,
-      displayName: formData.displayName,
-      swimmingLocation: formData.swimmingLocation,
-      workoutType: formData.workoutType,
-      goalSelectMenu: formData.goalSelectMenu || '',
+    // Create workout payload using the discrete function
+    const goals: WorkoutGoals = {
+      distance: distanceGoal,
+      calories: calorieGoal,
+      time: timeGoal
     };
 
-    // Add goal-specific values
-    if (formData.goalSelectMenu === 'distance') {
-      payload.targetValue = distanceGoal.distanceValue?.toString() || '';
-      payload.unit = distanceGoal.distanceUnit || DistanceUnits.meters;
-    } else if (formData.goalSelectMenu === 'calories') {
-      payload.targetValue = calorieGoal.calorieValue?.toString() || '';
-      payload.unit = calorieGoal.calorieUnit || EnergyUnits.calories;
-    } else if (formData.goalSelectMenu === 'time') {
-      payload.hrs = timeGoal.timeHours?.toString() || '0';
-      payload.min = timeGoal.timeMinutes?.toString() || '0';
-      payload.sec = timeGoal.timeSeconds?.toString() || '0';
-    }
-
-    // Add block and step data as flattened properties for compatibility with existing backend processing
-    formData.blocks.forEach((block, blockIndex) => {
-      payload[`block-${blockIndex}-type`] = block.type;
-      payload[`block-${blockIndex}-iterations`] = block.iterations.toString();
-
-      block.steps.forEach((step, stepIndex) => {
-        payload[`block-${blockIndex}-step-${stepIndex}-purpose`] = step.purpose;
-
-        if (step.goalType && step.goalType !== 'open') {
-          payload[`block-${blockIndex}-step-${stepIndex}-goal-type`] = step.goalType;
-
-          if (step.goalType === 'distance') {
-            if (step.distanceValue) payload[`block-${blockIndex}-step-${stepIndex}-distance-value`] = step.distanceValue.toString();
-            if (step.distanceUnit) payload[`block-${blockIndex}-step-${stepIndex}-distance-unit`] = step.distanceUnit;
-          } else if (step.goalType === 'calories') {
-            if (step.caloriesValue) payload[`block-${blockIndex}-step-${stepIndex}-calories-value`] = step.caloriesValue.toString();
-            if (step.caloriesUnit) payload[`block-${blockIndex}-step-${stepIndex}-calories-unit`] = step.caloriesUnit;
-          } else if (step.goalType === 'time') {
-            if (step.timeHours) payload[`block-${blockIndex}-step-${stepIndex}-hrs`] = step.timeHours.toString();
-            if (step.timeMinutes) payload[`block-${blockIndex}-step-${stepIndex}-min`] = step.timeMinutes.toString();
-            if (step.timeSeconds) payload[`block-${blockIndex}-step-${stepIndex}-sec`] = step.timeSeconds.toString();
-          }
-        }
-      });
-    });
+    const payload = createWorkoutPayload(formData, goals, true);
 
     // Submit to API route
     try {

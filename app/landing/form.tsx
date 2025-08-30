@@ -137,13 +137,13 @@ export default function WorkoutForm(): JSX.Element {
   const validateForm = useCallback(() => {
     if (formData.goalSelectMenu === 'custom') {
       // For custom workouts, check if there's at least one work step with a valid goal AND displayName
-      const hasValidWorkStep = formData.blocks.some(block => 
-        block.steps.some(step => 
-          step.purpose === IntervalStepPurpose.work && step.goalType && 
-          (step.goalType === WorkoutGoalTypes.open || 
-           step.goalType === WorkoutGoalTypes.distance || 
-           step.goalType === WorkoutGoalTypes.energy || 
-           step.goalType === WorkoutGoalTypes.time)
+      const hasValidWorkStep = formData.blocks.some(block =>
+        block.steps.some(step =>
+          step.purpose === IntervalStepPurpose.work && step.goalType &&
+          (step.goalType === WorkoutGoalTypes.open ||
+            step.goalType === WorkoutGoalTypes.distance ||
+            step.goalType === WorkoutGoalTypes.energy ||
+            step.goalType === WorkoutGoalTypes.time)
         )
       );
       const isValid = Boolean(formData.activityType && formData.displayName && hasValidWorkStep);
@@ -160,7 +160,7 @@ export default function WorkoutForm(): JSX.Element {
   }, [formData, validateForm]);
 
   return (
-    <div className="min-h-screen bg-brand-gradient rounded-lg py-6">
+    <div className="md:bg-brand-gradient rounded-lg py-6">
       <div className="container mx-auto px-4">
         <form onSubmit={handleSubmit} className="max-w-1/3 mx-auto">
           <div className="space-y-8">
@@ -253,8 +253,13 @@ export default function WorkoutForm(): JSX.Element {
 
             {/* Submit button - only show if all required fields are filled */}
             {formData.activityType && formData.goalSelectMenu && (
-              <div className="grid grid-cols-1 gap-4 justify-items-center md:justify-items-end">
-                <SubmitButton variant="dark" disabled={!isFormValid} />
+              <div className="grid grid-cols-1 gap-4">
+                <div className="w-full block md:hidden justify-items-center">
+                  <SubmitButton disabled={!isFormValid} variant="light" />
+                </div>
+                <div className="w-full hidden md:block md:justify-items-end">
+                  <SubmitButton disabled={!isFormValid} variant="dark" />
+                </div>
                 {actionResult?.success && (
                   <button
                     type="button"

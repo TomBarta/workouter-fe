@@ -8,11 +8,11 @@ interface SubmitButtonProps {
 export const SubmitButton = ({ disabled = true, variant = 'light' }: SubmitButtonProps): JSX.Element => {
     const getButtonClasses = () => {
         if (disabled) {
-            return 'bg-wktr-gray-400 text-wktr-gray-600 cursor-not-allowed';
+            return 'btn bg-wktr-gray-400 text-wktr-gray-600 cursor-not-allowed';
         }
 
         if (variant === 'dark') {
-            return 'bg-wktr-black-950 text-wktr-gray-300 hover:bg-wktr-black-900 hover:text-wktr-gray-300 border-none';
+            return 'btn bg-wktr-black-950 text-wktr-gray-300 hover:bg-wktr-black-900 hover:text-wktr-gray-300 border-none';
         }
 
         // Light variant (default)
@@ -23,7 +23,7 @@ export const SubmitButton = ({ disabled = true, variant = 'light' }: SubmitButto
         <div className="w-full max-w-md">
             <button
                 type="submit"
-                className={`btn btn-lg w-full transition-all duration-200 ${getButtonClasses()}`}
+                className={`btn-lg w-full ${getButtonClasses()}`}
                 disabled={disabled}
             >
                 Create Workout

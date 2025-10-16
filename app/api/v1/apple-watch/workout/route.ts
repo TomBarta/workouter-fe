@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cleanUpPayload, Payload, setGoal, setWorkoutType } from '@/app/lib/pageActionUtils'
+import { saveDebugPayload } from '@/app/lib/debugUtils'
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,6 +16,12 @@ export async function POST(request: NextRequest) {
 
     payload = cleanUpPayload(payload)
     console.log('payload after cleaning: ', payload)
+
+    // Save file locally for debugging
+    if (process.env.NODE_ENV === 'development') {
+      saveDebugPayload(payload, 'workout-payload')
+    }
+
 
     // Forward to external API
     const response = await fetch(`http://127.0.0.1:8080/workout`, {

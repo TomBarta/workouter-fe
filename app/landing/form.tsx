@@ -159,6 +159,9 @@ export default function WorkoutForm(): JSX.Element {
     validateForm();
   }, [formData, validateForm]);
 
+  console.log('formData blocks', formData?.blocks)
+
+
   return (
     <div className="w-full md:w-auto md:max-w-1/3 md:bg-brand-gradient rounded-lg py-6">
       <div className="container mx-auto px-4">

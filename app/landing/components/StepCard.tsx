@@ -53,7 +53,7 @@ export const StepCard = ({
                             <input
                                 type="radio"
                                 checked={step.purpose === IntervalStepPurpose.work}
-                                onChange={() => updateStep({ purpose: IntervalStepPurpose.work })}
+                                onChange={() => updateStep({ purpose: IntervalStepPurpose.work, goalType: undefined })}
                                 className="radio radio-primary border-wktr-gray-300 checked:border-wktr-orange-500 checked:bg-wktr-orange-500"
                             />
                             <span className="label-text text-wktr-black-600">Work</span>
@@ -62,7 +62,7 @@ export const StepCard = ({
                             <input
                                 type="radio"
                                 checked={step.purpose === IntervalStepPurpose.recovery}
-                                onChange={() => updateStep({ purpose: IntervalStepPurpose.recovery })}
+                                onChange={() => updateStep({ purpose: IntervalStepPurpose.recovery, goalType: WorkoutGoalTypes.time })}
                                 className="radio radio-primary border-wktr-gray-300 checked:border-wktr-blue-500 checked:bg-wktr-blue-500"
                             />
                             <span className="label-text text-wktr-black-600">Recovery</span>
@@ -135,9 +135,9 @@ export const StepCard = ({
                         </label>
                         <WorkoutTime
                             timeHours={step.timeHours}
+                            showHours={false}
                             timeMinutes={step.timeMinutes}
                             timeSeconds={step.timeSeconds}
-                            showHours={false}
                             onChange={({ timeHours, timeMinutes, timeSeconds }) =>
                                 updateStep({ timeHours, timeMinutes, timeSeconds })
                             }

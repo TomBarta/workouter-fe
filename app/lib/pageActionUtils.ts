@@ -160,9 +160,16 @@ export function cleanUpPayload(payload: Payload): WorkoutPlan {
     result.swimmingLocation = 'indoors';
 
     // Handle custom workout blocks
-    if (result.goalSelectMenu === 'custom' && result.blocks) {
+    if (result.goalSelectMenu === 'custom') {
+        // Parse flat form fields into structured blocks if they don't exist already
+        if (!result.blocks || !Array.isArray(result.blocks)) {
+            result.blocks = parseFlatFormFieldsToBlocks(result);
+        }
+
         // Convert form blocks to IntervalBlocks format
-        result.blocks = convertFormBlocksToIntervalBlocks(result.blocks);
+        if (result.blocks && result.blocks.length > 0) {
+            result.blocks = convertFormBlocksToIntervalBlocks(result.blocks);
+        }
     }
 
     // Remove raw steps and blocks form fields
@@ -204,6 +211,107 @@ export function cleanUpPayload(payload: Payload): WorkoutPlan {
     return cleanPayload as WorkoutPlan;
 }
 
+// Helper function to parse flat form fields (block-X-*, step-X-*) into structured blocks
+function parseFlatFormFieldsToBlocks(payload: Payload): any[] {
+    const blocks: any[] = [];
+    const blockIndices = new Set<number>();
+    const stepIndices = new Set<number>();
+
+    // Find all block and step indices
+    Object.keys(payload).forEach(key => {
+        const blockMatch = key.match(/^block-(\d+)-/);
+        if (blockMatch) {
+            blockIndices.add(parseInt(blockMatch[1]));
+        }
+        const stepMatch = key.match(/^step-(\d+)-/);
+        if (stepMatch) {
+            stepIndices.add(parseInt(stepMatch[1]));
+        }
+    });
+
+    const sortedBlockIndices = Array.from(blockIndices).sort((a, b) => a - b);
+    const sortedStepIndices = Array.from(stepIndices).sort((a, b) => a - b);
+
+    // Determine the association pattern:
+    // If we have multiple blocks and multiple steps, assume step-N belongs to block-N
+    // If we have one block and multiple steps, all steps belong to that block
+    const multiBlockMode = sortedBlockIndices.length > 1;
+
+    // Process each block
+    sortedBlockIndices.forEach(blockIndex => {
+        const blockType = payload[`block-${blockIndex}-type`];
+        const blockIterations = payload[`block-${blockIndex}-iterations`];
+
+        if (!blockType) {
+            return; // Skip blocks without type
+        }
+
+        const steps: any[] = [];
+
+        // Determine which steps belong to this block
+        let relevantStepIndices: number[];
+        if (multiBlockMode) {
+            // In multi-block mode, step-N belongs to block-N (only if that step exists)
+            relevantStepIndices = sortedStepIndices.includes(blockIndex) ? [blockIndex] : [];
+        } else {
+            // In single-block mode, include all consecutive steps starting from 0 that have goal-type
+            // This allows multiple steps in one block but filters out incomplete steps
+            relevantStepIndices = [];
+            for (let i = 0; i < sortedStepIndices.length; i++) {
+                const stepIdx = sortedStepIndices[i];
+                const hasGoalType = payload[`step-${stepIdx}-goal-type`];
+                if (stepIdx === i && (hasGoalType || i === 0)) {
+                    // Include step if it's consecutive and has goal-type (or is the first step)
+                    relevantStepIndices.push(stepIdx);
+                } else {
+                    // Stop at first gap or missing goal-type
+                    break;
+                }
+            }
+        }
+
+        relevantStepIndices.forEach(stepIndex => {
+            const stepPurpose = payload[`step-${stepIndex}-purpose`];
+
+            if (!stepPurpose) {
+                return; // Skip steps without purpose
+            }
+
+            const step: any = {
+                purpose: stepPurpose
+            };
+
+            const goalType = payload[`step-${stepIndex}-goal-type`];
+            step.goalType = goalType || 'open';
+
+            // Parse goal-specific fields
+            if (goalType === 'distance') {
+                step.distanceValue = parseFloat(payload[`step-${stepIndex}-distance-value`]) || 0;
+                step.distanceUnit = payload[`step-${stepIndex}-distance-unit`] || 'm';
+            } else if (goalType === 'calories' || goalType === 'energy') {
+                step.caloriesValue = parseFloat(payload[`step-${stepIndex}-calories-value`]) || 0;
+                step.caloriesUnit = payload[`step-${stepIndex}-calories-unit`] || 'kcal';
+            } else if (goalType === 'time') {
+                step.timeHours = parseInt(payload[`step-${stepIndex}-time-hours`]) || 0;
+                step.timeMinutes = parseInt(payload[`step-${stepIndex}-time-minutes`]) || 0;
+                step.timeSeconds = parseInt(payload[`step-${stepIndex}-time-seconds`]) || 0;
+            }
+
+            steps.push(step);
+        });
+
+        if (steps.length > 0) {
+            blocks.push({
+                type: blockType,
+                iterations: parseInt(blockIterations) || 1,
+                steps
+            });
+        }
+    });
+
+    return blocks;
+}
+
 // Helper function to convert form blocks to IntervalBlocks format
 function convertFormBlocksToIntervalBlocks(formBlocks: any[]): IntervalBlock[] {
     return formBlocks.map(block => ({
@@ -211,22 +319,29 @@ function convertFormBlocksToIntervalBlocks(formBlocks: any[]): IntervalBlock[] {
         iterations: block.iterations || 1,
         steps: block.steps.map((step: any) => {
             const intervalStep: any = {
-                purpose: step.purpose === 'work' ? IntervalStepPurpose.work : IntervalStepPurpose.recovery,
+                purpose: step.purpose,
                 alert: null
             };
-            console.log('step', step)
+
             // Set goal based on step goal type
             switch (step.goalType) {
                 case 'distance':
                     intervalStep.goal = {
-                        type: WorkoutGoalTypes.distance,
+                        type: 'distance',
                         targetValue: step.distanceValue || 0,
                         unit: step.distanceUnit || DistanceUnits.meters
                     };
                     break;
+                case 'calories':
+                    intervalStep.goal = {
+                        type: 'energy',
+                        targetValue: step.caloriesValue || 0,
+                        unit: step.caloriesUnit || EnergyUnits.calories
+                    };
+                    break;
                 case 'energy':
                     intervalStep.goal = {
-                        type: WorkoutGoalTypes.energy,
+                        type: 'energy',
                         targetValue: step.caloriesValue || 0,
                         unit: step.caloriesUnit || EnergyUnits.calories
                     };
@@ -235,16 +350,16 @@ function convertFormBlocksToIntervalBlocks(formBlocks: any[]): IntervalBlock[] {
                     const hours = step.timeHours || 0;
                     const minutes = step.timeMinutes || 0;
                     const seconds = step.timeSeconds || 0;
-                    const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
                     intervalStep.goal = {
-                        type: WorkoutGoalTypes.time,
-                        targetDuration: totalSeconds,
-                        unit: 'seconds'
+                        type: 'time',
+                        hours: hours,
+                        minutes: minutes,
+                        seconds: seconds
                     };
                     break;
                 case 'open':
                 default:
-                    intervalStep.goal = { type: WorkoutGoalTypes.open };
+                    intervalStep.goal = { type: 'open' };
                     break;
             }
 

@@ -1,5 +1,5 @@
 import { cleanUpPayload, Payload, setGoal, setWorkoutType } from '@/app/lib/pageActionUtils'
-import { DistanceUnits, EnergyUnits, HKWorkoutActivityType, TimeUnits, WorkoutGoalTypes, workoutType } from '@/app/utils/workouts'
+import { DistanceUnits, EnergyUnits, HKWorkoutActivityType, WorkoutGoalTypes, workoutType } from '@/app/utils/workouts'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 describe('pageActionUtils', () => {
@@ -105,9 +105,9 @@ describe('pageActionUtils', () => {
       const timeGoal = setGoal({ 
         ...testPayload, 
         goalSelectMenu: 'time', 
-        hrs: '2', 
-        min: '15', 
-        sec: '30' 
+        hrs: 2, 
+        min: 15, 
+        sec: 30 
       });
       
       expect(timeGoal).toEqual({ 
@@ -137,13 +137,13 @@ describe('pageActionUtils', () => {
         ...testPayload, 
         goalSelectMenu: 'energy', 
         targetValue: 300, 
-        unit: EnergyUnits.kilojoules 
+        unit: EnergyUnits.calories 
       });
       
       expect(energyGoal).toEqual({ 
         type: WorkoutGoalTypes.energy, 
         targetValue: 300, 
-        unit: EnergyUnits.kilojoules 
+        unit: EnergyUnits.calories 
       });
     });
   });

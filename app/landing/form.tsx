@@ -160,9 +160,9 @@ export default function WorkoutForm(): JSX.Element {
   }, [formData, validateForm]);
 
   return (
-    <div className="md:bg-brand-gradient rounded-lg py-6">
+    <div className="w-full md:w-auto md:max-w-1/3 md:bg-brand-gradient rounded-lg py-6">
       <div className="container mx-auto px-4">
-        <form onSubmit={handleSubmit} className="max-w-1/3 mx-auto">
+        <form onSubmit={handleSubmit}>
           <div className="space-y-8">
             {/* Basic workout info */}
             <div className="card-workout">

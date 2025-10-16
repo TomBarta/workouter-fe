@@ -191,8 +191,9 @@ export function cleanUpPayload(payload: Payload): WorkoutPlan {
     result.swimmingLocation = 'indoors';
 
     // Handle custom workout blocks
-    if (result.goalSelectMenu === 'custom') {
-        result.blocks = createBlocksFromFormData(result);
+    if (result.goalSelectMenu === 'custom' && result.blocks) {
+        // Convert form blocks to IntervalBlocks format
+        result.blocks = convertFormBlocksToIntervalBlocks(result.blocks);
     }
 
     // Remove raw steps and blocks form fields
@@ -234,7 +235,60 @@ export function cleanUpPayload(payload: Payload): WorkoutPlan {
     return cleanPayload as WorkoutPlan;
 }
 
-// Helper function to create blocks from form data
+// Helper function to convert form blocks to IntervalBlocks format
+function convertFormBlocksToIntervalBlocks(formBlocks: any[]): IntervalBlock[] {
+    return formBlocks.map(block => ({
+        type: block.type as 'work' | 'recovery',
+        iterations: block.iterations || 1,
+        steps: block.steps.map((step: any) => {
+            const intervalStep: any = {
+                purpose: step.purpose === 'work' ? IntervalStepPurpose.work : IntervalStepPurpose.recovery,
+                alert: null
+            };
+
+            // Set goal based on step goal type
+            if (step.goalType) {
+                switch (step.goalType) {
+                    case 'distance':
+                        intervalStep.goal = {
+                            type: WorkoutGoalTypes.distance,
+                            targetValue: step.distanceValue || 0,
+                            unit: step.distanceUnit || DistanceUnits.meters
+                        };
+                        break;
+                    case 'energy':
+                        intervalStep.goal = {
+                            type: WorkoutGoalTypes.energy,
+                            targetValue: step.caloriesValue || 0,
+                            unit: step.caloriesUnit || EnergyUnits.calories
+                        };
+                        break;
+                    case 'time':
+                        const hours = step.timeHours || 0;
+                        const minutes = step.timeMinutes || 0;
+                        const seconds = step.timeSeconds || 0;
+                        const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+                        intervalStep.goal = {
+                            type: WorkoutGoalTypes.time,
+                            targetDuration: totalSeconds,
+                            unit: 'seconds'
+                        };
+                        break;
+                    case 'open':
+                    default:
+                        intervalStep.goal = { type: WorkoutGoalTypes.open };
+                        break;
+                }
+            } else {
+                intervalStep.goal = { type: WorkoutGoalTypes.open };
+            }
+
+            return intervalStep;
+        })
+    }));
+}
+
+// Helper function to create blocks from form data (legacy flat format)
 function createBlocksFromFormData(payload: Payload): IntervalBlock[] {
     const blocks: IntervalBlock[] = [];
 

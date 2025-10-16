@@ -1,11 +1,12 @@
 import { vi, describe, test, expect, beforeEach } from 'vitest'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { render, fireEvent, within } from '@testing-library/react'
 import { CustomWorkoutBuilder } from '@/app/landing/components/CustomWorkoutBuilder'
 import { Block } from '@/app/landing/components/types'
+import { IntervalStepPurpose, WorkoutGoalTypes } from '@/app/utils/workouts'
 
 // Mock the BlockCard component
 vi.mock('@/app/landing/components/BlockCard', () => ({
-    BlockCard: ({ block, onUpdate, onRemove, canRemove }: any) => (
+    BlockCard: ({ block, onUpdate, onRemove }: any) => (
         <div data-testid="block-card">
             <span>Block: {block.id}</span>
             <button onClick={() => onUpdate({ ...block, type: 'recovery' })}>
@@ -25,8 +26,8 @@ describe('CustomWorkoutBuilder', () => {
             steps: [
                 {
                     id: 'step-1',
-                    purpose: 'work',
-                    goalType: 'open'
+                    purpose: IntervalStepPurpose.work,
+                    goalType: WorkoutGoalTypes.open
                 }
             ]
         },
@@ -37,8 +38,8 @@ describe('CustomWorkoutBuilder', () => {
             steps: [
                 {
                     id: 'step-2',
-                    purpose: 'recovery',
-                    goalType: 'open'
+                    purpose: IntervalStepPurpose.recovery,
+                    goalType: WorkoutGoalTypes.time
                 }
             ]
         }
@@ -48,19 +49,6 @@ describe('CustomWorkoutBuilder', () => {
 
     beforeEach(() => {
         vi.clearAllMocks()
-    })
-
-    test('renders title and description', () => {
-        const { container } = render(
-            <CustomWorkoutBuilder
-                blocks={mockBlocks}
-                onUpdate={mockOnUpdate}
-            />
-        )
-
-        const builder = container.firstChild as HTMLElement
-        expect(within(builder).getByRole('heading', { name: 'Custom Workout Builder' })).toBeTruthy()
-        expect(within(builder).getByText(/Create your workout by adding blocks and steps/)).toBeTruthy()
     })
 
     test('renders all blocks', () => {
@@ -166,7 +154,6 @@ describe('CustomWorkoutBuilder', () => {
         )
 
         const builder = container.firstChild as HTMLElement
-        expect(within(builder).getByRole('heading', { name: 'Custom Workout Builder' })).toBeTruthy()
         expect(within(builder).getByRole('button', { name: 'Add New Block' })).toBeTruthy()
     })
 

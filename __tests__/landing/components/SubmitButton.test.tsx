@@ -83,7 +83,7 @@ describe('SubmitButton', () => {
 
         const button = container.querySelector('button')
         const buttonContainer = button?.parentElement
-        expect(buttonContainer?.className).toContain('w-full')
-        expect(buttonContainer?.className).toContain('max-w-md')
+        expect(buttonContainer?.className).toContain('w-3/4')
+        expect(buttonContainer?.className).toContain('mx-auto')
     })
 })

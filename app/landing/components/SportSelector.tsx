@@ -19,7 +19,7 @@ export const SportSelector = ({ value, onChange }: SportSelectorProps): JSX.Elem
             className="select select-bordered w-full text-lg border-wktr-gray-300 focus:border-wktr-orange-500 focus:ring-2 focus:ring-wktr-orange-500/20 focus:outline-none transition-colors duration-200"
             required
         >
-            <option value="">Sport...</option>
+            <option value="">Select Sport</option>
             {activities().map(([value, activity]) => (
                 <option key={value} value={value}>{activity}</option>
             ))}

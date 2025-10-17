@@ -257,20 +257,22 @@ export default function WorkoutForm(): JSX.Element {
             {/* Submit button - only show if all required fields are filled */}
             {formData.activityType && formData.goalSelectMenu && (
               <div className="grid grid-cols-1 gap-4">
-                <div className="w-full block md:hidden justify-items-center">
+                <div className="w-full block md:hidden">
                   <SubmitButton disabled={!isFormValid} variant="light" />
                 </div>
-                <div className="w-full hidden md:block md:justify-items-end">
+                <div className="w-full hidden md:block">
                   <SubmitButton disabled={!isFormValid} variant="dark" />
                 </div>
                 {actionResult?.success && (
-                  <button
-                    type="button"
-                    onClick={resetForm}
-                    className="btn btn-lg w-full max-w-md bg-wktr-gray-300 text-wktr-black-700 hover:bg-wktr-gray-400 hover:text-wktr-black-800 transition-all duration-200"
-                  >
-                    Reset
-                  </button>
+                  <div className="w-3/4 mx-auto">
+                    <button
+                      type="button"
+                      onClick={resetForm}
+                      className="btn btn-lg w-full bg-wktr-gray-300 text-wktr-black-700 hover:bg-wktr-gray-400 hover:text-wktr-black-800 transition-all duration-200"
+                    >
+                      Reset
+                    </button>
+                  </div>
                 )}
               </div>
             )}

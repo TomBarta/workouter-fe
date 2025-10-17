@@ -20,7 +20,7 @@ export const SubmitButton = ({ disabled = true, variant = 'light' }: SubmitButto
     };
 
     return (
-        <div className="w-full max-w-md">
+        <div className="w-3/4 mx-auto">
             <button
                 type="submit"
                 className={`btn-lg w-full ${getButtonClasses()}`}

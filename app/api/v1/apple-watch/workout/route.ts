@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cleanUpPayload, Payload, setGoal, setWorkoutType } from '@/app/lib/pageActionUtils'
 import { saveDebugPayload } from '@/app/lib/debugUtils'
+import { prisma } from '@/app/lib/prisma'
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,6 +23,22 @@ export async function POST(request: NextRequest) {
       saveDebugPayload(payload, 'workout-payload')
     }
 
+    // Save to database after cleaning payload
+    try {
+      const savedWorkout = await prisma.workout.create({
+        data: {
+          displayName: payload.displayName || 'Untitled Workout',
+          workoutJson: payload,
+          visibility: 'private',
+          userId: null, // Will be set when auth is implemented
+          schemaVersion: 1,
+        },
+      })
+      console.log('Workout saved to database with ID:', savedWorkout.id)
+    } catch (dbError) {
+      console.error('Failed to save workout to database:', dbError)
+      // Don't fail the request if database save fails, just log it
+    }
 
     // Forward to external API
     const response = await fetch(`http://127.0.0.1:8080/workout`, {

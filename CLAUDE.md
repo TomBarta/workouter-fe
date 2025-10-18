@@ -18,14 +18,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - React components: PascalCase
   - Functions/variables: camelCase
   - Interfaces/types: PascalCase with "I" prefix optional
+  - **Prisma models**: PascalCase for model names, camelCase for TypeScript fields
+  - **Database tables/columns**: snake_case (use `@map` and `@@map` in Prisma schema)
 - **Error Handling**: Use try/catch with specific error types
 - **Testing**: Use Vitest with test.each for parameterized tests
 - **Components**: Prefer functional components with hooks
+- **Prisma Conventions**:
+  - Always map Prisma models to snake_case table names using `@@map("table_name")`
+  - Always map camelCase fields to snake_case columns using `@map("column_name")`
+  - Use canonical PostgreSQL naming (e.g., `created_at`, `user_id`, not `createdAt`, `userId`)
 
 ## Project Architecture
 
 ### Tech Stack
 - **Framework**: Next.js 15 with App Router
+- **Database**: PostgreSQL with Prisma ORM
 - **Styling**: Tailwind CSS + DaisyUI with custom Workouter brand system
 - **Testing**: Vitest + React Testing Library + JSDOM
 - **Language**: TypeScript with strict mode

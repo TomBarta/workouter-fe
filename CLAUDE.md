@@ -1,59 +1,36 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance when working with code in this repository.
 
-## Build/Test/Lint Commands
-- `npm run dev` - Run development server with turbopack
-- `npm run build` - Build for production
-- `npm run lint` - Run ESLint
-- `npm run test` - Run all Vitest tests
-- `npm run test __tests__/actions.test.ts` - Run specific test file
-- `npm run test -- -t "test name"` - Run tests matching pattern
+## Commands
+- `npm run dev` — Start dev server with Turbopack
+- `npm run build` — Production build
+- `npm run lint` — Run ESLint
 
-## Code Style Guidelines
-- **TypeScript**: Strict typing required, interfaces preferred over types
-- **Imports**: Use absolute paths with `@/` prefix
-- **Formatting**: Follow ESLint rules (based on Next.js defaults)
-- **Naming**:
-  - React components: PascalCase
-  - Functions/variables: camelCase
-  - Interfaces/types: PascalCase with "I" prefix optional
-  - **Prisma models**: PascalCase for model names, camelCase for TypeScript fields
-  - **Database tables/columns**: snake_case (use `@map` and `@@map` in Prisma schema)
-- **Error Handling**: Use try/catch with specific error types
-- **Testing**: Use Vitest with test.each for parameterized tests
-- **Components**: Prefer functional components with hooks
-- **Prisma Conventions**:
-  - Always map Prisma models to snake_case table names using `@@map("table_name")`
-  - Always map camelCase fields to snake_case columns using `@map("column_name")`
-  - Use canonical PostgreSQL naming (e.g., `created_at`, `user_id`, not `createdAt`, `userId`)
+## Design System
+**Always read `DESIGN_SYSTEM.md` before writing any UI code.** It is the source of truth for:
+- CSS variable names (colors, spacing, radius, shadow)
+- Typography classes (`.text-display-lg`, `.text-body`, `.text-utility`, etc.)
+- Component anatomy (Button, Tag, Step block, Input)
+- Patterns (workout title block, effort chart, workout card, list row)
+- Voice and copy rules
+- Tailwind token names
 
-## Project Architecture
+## Code Style
+- **TypeScript** — strict mode, interfaces preferred over types
+- **Imports** — `@/` alias for project root
+- **Components** — functional components with hooks, PascalCase
+- **CSS** — CSS variables from design system via Tailwind tokens or direct `var()`; no arbitrary values
 
-### Tech Stack
-- **Framework**: Next.js 15 with App Router
-- **Database**: PostgreSQL with Prisma ORM
-- **Styling**: Tailwind CSS + DaisyUI with custom Workouter brand system
-- **Testing**: Vitest + React Testing Library + JSDOM
-- **Language**: TypeScript with strict mode
+## Architecture
+- **Framework**: Next.js 15, App Router
+- **Styling**: Tailwind CSS wired to design system CSS variables (no component library)
+- **Fonts**: Loaded via `next/font/google` in `app/layout.tsx` — Archivo Black (display), Inter (body), JetBrains Mono (mono)
+- **Theme**: `data-theme="light|dark"` on `<html>`; `data-accent="coral|orange|violet"` on `<html>`
+- **Directory**: `app/` for pages, layouts, and route handlers; `components/` for shared UI
 
-### Directory Structure
-- `app/` - Next.js App Router pages and layouts
-  - `landing/` - Landing page components with modular architecture
-  - `lib/` - Server actions and utilities
-- `__tests__/` - Test files mirroring app structure
-- Custom brand design system in `tailwind.config.ts`
-
-### Key Patterns
-- **Server Actions**: Located in `app/lib/actions.ts`, handles workout creation API calls
-- **Component Organization**: Landing components use barrel exports (`index.ts`)
-- **Form Handling**: WorkoutFormData interface defines structured workout data
-- **API Integration**: Communicates with external workout service at localhost:8080
-- **Brand System**: Comprehensive Tailwind config with Workouter colors, gradients, and components
-
-### Testing Setup
-- Vitest configuration with jsdom environment
-- React Testing Library with comprehensive cleanup
-- Tests organized by feature area with setup in `__tests__/setup.ts`
-
-Always run tests after code changes to ensure functionality is preserved.
+## Key Files
+- `app/globals.css` — CSS variable definitions + typography utility classes
+- `app/layout.tsx` — Root layout with font loading and theme attributes
+- `tailwind.config.ts` — Tailwind extended with design system tokens
+- `DESIGN_SYSTEM.md` — Full design specification (tokens, components, patterns, code)

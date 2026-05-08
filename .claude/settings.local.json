@@ -17,7 +17,12 @@
       "Bash(git -C /Users/tom/code/workouter-fe show 9ed8b58:app/layout.tsx)",
       "Bash(npx prisma migrate:*)",
       "Bash(git -C /Users/tom/code/workouter-fe diff --stat)",
-      "Bash(git -C /Users/tom/code/workouter-fe add -A)"
+      "Bash(git -C /Users/tom/code/workouter-fe add -A)",
+      "Bash(git -C /Users/tom/code/workouter-fe log --oneline -5)",
+      "Bash(git -C /Users/tom/code/workouter-fe commit -m \"$(cat <<''EOF''\nSet up Next.js app with TypeScript, authentication, and OAuth 2.0 API\n\n- Initialize Next.js 15 with App Router and TypeScript\n- Add NextAuth.js v5 with OAuth providers (Google, GitHub) and credentials\n- Set up Prisma with PostgreSQL for database\n- Implement OAuth 2.0 authorization server for external API access (MCP)\n- Create landing page, login/register, and dashboard\n- Configure design system with CSS variables, typography, and Tailwind\n- Add protected routes with middleware\n- Create API endpoints: /api/v1/me, /api/v1/workouts, /api/v1/oauth/*\n- Support light/dark themes with configurable accent colors\n\nReady for feature development. Database migrations pending.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git -C /Users/tom/code/workouter-fe push)",
+      "Bash(psql:*)",
+      "Bash(git -C /Users/tom/code/workouter-fe status --short)"
     ],
     "deny": [],
     "ask": []

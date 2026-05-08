@@ -1,13 +1,8 @@
-import { auth } from "@/app/lib/auth";
-import { redirect } from "next/navigation";
+import { requireAuth } from "@/app/lib/auth-helpers";
 import Link from "next/link";
 
 export default async function DashboardPage() {
-  const session = await auth();
-
-  if (!session?.user) {
-    redirect("/login");
-  }
+  const session = await requireAuth();
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>

@@ -9,6 +9,8 @@ import { z } from "zod";
 
 export const authConfig: NextAuthConfig = {
   adapter: PrismaAdapter(prisma),
+  secret: process.env.AUTH_SECRET,
+  trustHost: true,
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -53,9 +55,17 @@ export const authConfig: NextAuthConfig = {
     }),
   ],
   callbacks: {
-    async session({ session, user }) {
+    async jwt({ token, user }) {
+      // Add user ID to JWT token on sign in
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      // Add user ID to session from JWT token
       if (session.user) {
-        session.user.id = user.id;
+        session.user.id = token.id as string;
       }
       return session;
     },
@@ -66,7 +76,7 @@ export const authConfig: NextAuthConfig = {
     error: "/login",
   },
   session: {
-    strategy: "database",
+    strategy: "jwt",
   },
 };
 

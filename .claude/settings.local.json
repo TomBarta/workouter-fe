@@ -26,7 +26,18 @@
       "Bash(git -C /Users/tom/code/workouter-fe commit -m \"$(cat <<''EOF''\nConfigure Auth.js with Google SSO and fix Edge Runtime compatibility\n\n- Set up Google OAuth provider with credentials\n- Fix UntrustedHost error by adding trustHost config\n- Switch from database to JWT session strategy for Edge Runtime compatibility\n- Update session callbacks to work with JWT tokens\n- Add AUTH_TRUST_HOST environment variable\n- Create auth helper functions (requireAuth, getCurrentUser, etc.)\n- Run Prisma migrations to create database tables\n- Add comprehensive AUTH_SETUP.md documentation\n\nGoogle Sign-In now fully functional. Users can authenticate with Google\nand sessions work correctly with middleware on Edge Runtime.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(npm search:*)",
       "WebFetch(domain:github.com)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Read(//Users/tom/code/workouter-be/**)",
+      "WebFetch(domain:code.claude.com)",
+      "Bash(claude mcp remove:*)",
+      "Bash(claude mcp add --transport stdio google-drive -s local -- env GOOGLE_DRIVE_OAUTH_CREDENTIALS=/Users/tom/.config/gdrive-mcp/credentials.json npx -y @piotr-agier/google-drive-mcp)",
+      "Bash(claude mcp:*)",
+      "mcp__google-drive__search",
+      "Read(//Users/tom/.config/gdrive-mcp/**)",
+      "Read(//Users/tom/.config/**)",
+      "Bash(GOOGLE_DRIVE_OAUTH_CREDENTIALS=/Users/tom/.config/gdrive-mcp/credentials.json npx:*)",
+      "mcp__notion__notion-create-pages",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

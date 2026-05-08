@@ -3,7 +3,21 @@
     "allow": [
       "Bash(npm run test:*)",
       "Bash(npm run build)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(cat:*)",
+      "Bash(git -C /Users/tom/code/workouter-fe status)",
+      "Bash(git -C /Users/tom/code/workouter-fe log --oneline -15)",
+      "Bash(git -C /Users/tom/code/workouter-fe ls-tree:*)",
+      "Bash(git -C /Users/tom/code/workouter-fe show HEAD:package.json)",
+      "Bash(git -C /Users/tom/code/workouter-fe show HEAD --stat)",
+      "Bash(git -C /Users/tom/code/workouter-fe show cfa897b --name-only)",
+      "Bash(git -C /Users/tom/code/workouter-fe show 9ed8b58:package.json)",
+      "Bash(git -C /Users/tom/code/workouter-fe show 9ed8b58:prisma/schema.prisma)",
+      "Bash(git -C /Users/tom/code/workouter-fe show 9ed8b58:app/lib/prisma.ts)",
+      "Bash(git -C /Users/tom/code/workouter-fe show 9ed8b58:app/layout.tsx)",
+      "Bash(npx prisma migrate:*)",
+      "Bash(git -C /Users/tom/code/workouter-fe diff --stat)",
+      "Bash(git -C /Users/tom/code/workouter-fe add -A)"
     ],
     "deny": [],
     "ask": []

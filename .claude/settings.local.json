@@ -22,7 +22,11 @@
       "Bash(git -C /Users/tom/code/workouter-fe commit -m \"$(cat <<''EOF''\nSet up Next.js app with TypeScript, authentication, and OAuth 2.0 API\n\n- Initialize Next.js 15 with App Router and TypeScript\n- Add NextAuth.js v5 with OAuth providers (Google, GitHub) and credentials\n- Set up Prisma with PostgreSQL for database\n- Implement OAuth 2.0 authorization server for external API access (MCP)\n- Create landing page, login/register, and dashboard\n- Configure design system with CSS variables, typography, and Tailwind\n- Add protected routes with middleware\n- Create API endpoints: /api/v1/me, /api/v1/workouts, /api/v1/oauth/*\n- Support light/dark themes with configurable accent colors\n\nReady for feature development. Database migrations pending.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(git -C /Users/tom/code/workouter-fe push)",
       "Bash(psql:*)",
-      "Bash(git -C /Users/tom/code/workouter-fe status --short)"
+      "Bash(git -C /Users/tom/code/workouter-fe status --short)",
+      "Bash(git -C /Users/tom/code/workouter-fe commit -m \"$(cat <<''EOF''\nConfigure Auth.js with Google SSO and fix Edge Runtime compatibility\n\n- Set up Google OAuth provider with credentials\n- Fix UntrustedHost error by adding trustHost config\n- Switch from database to JWT session strategy for Edge Runtime compatibility\n- Update session callbacks to work with JWT tokens\n- Add AUTH_TRUST_HOST environment variable\n- Create auth helper functions (requireAuth, getCurrentUser, etc.)\n- Run Prisma migrations to create database tables\n- Add comprehensive AUTH_SETUP.md documentation\n\nGoogle Sign-In now fully functional. Users can authenticate with Google\nand sessions work correctly with middleware on Edge Runtime.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(npm search:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(npm uninstall:*)"
     ],
     "deny": [],
     "ask": []

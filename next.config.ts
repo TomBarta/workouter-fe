@@ -6,9 +6,28 @@ import { withSentryConfig } from "@sentry/nextjs";
 // ---------------------------------------------------------------------------
 const nextConfig: NextConfig = {
   experimental: {
-    // Enable instrumentation hook for server-side initialization
+    // Enable instrumentation hook for Sentry and OpenTelemetry initialization
     instrumentationHook: true,
   },
+  webpack: (config, { isServer }) => {
+    // Exclude server-only modules from client bundle
+    if (!isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        './instrumentation.server': false,
+        './instrumentation.server.ts': false,
+      };
+    }
+    return config;
+  },
+  // Mark OpenTelemetry packages as server-only external packages
+  serverExternalPackages: [
+    '@opentelemetry/sdk-node',
+    '@opentelemetry/auto-instrumentations-node',
+    '@opentelemetry/exporter-trace-otlp-http',
+    '@opentelemetry/exporter-metrics-otlp-http',
+    '@grpc/grpc-js',
+  ],
 };
 
 // ---------------------------------------------------------------------------

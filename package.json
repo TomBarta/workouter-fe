@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
+    "dev": "next dev",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint",
     "test": "vitest",
@@ -14,10 +14,10 @@
     "@auth/prisma-adapter": "^2.7.4",
     "@prisma/client": "^6.17.1",
     "bcryptjs": "^2.4.3",
-    "next": "15.1.7",
+    "next": "16.2.6",
     "next-auth": "^5.0.0-beta.25",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -26,12 +26,12 @@
     "@testing-library/react": "^16.2.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.5.0",
     "eslint": "^9",
-    "eslint-config-next": "15.1.7",
+    "eslint-config-next": "16.2.6",
     "jsdom": "^26.0.0",
     "postcss": "^8",
     "prisma": "^6.17.1",
@@ -39,5 +39,9 @@
     "typescript": "^5",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.0.7"
+  },
+  "overrides": {
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3"
   }
 }

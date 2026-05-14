@@ -1,0 +1,35 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - img [ref=e6]
+        - generic [ref=e10]: Workouter
+      - generic [ref=e11]:
+        - link "SIGN IN" [ref=e12] [cursor=pointer]:
+          - /url: /login
+        - link "GET STARTED →" [ref=e13] [cursor=pointer]:
+          - /url: /register
+  - main [ref=e14]:
+    - generic [ref=e15]:
+      - generic [ref=e16]: STRUCTURED WORKOUTS
+      - heading "Build workouts for your watch." [level=1] [ref=e17]:
+        - text: Build workouts
+        - text: for your watch.
+      - paragraph [ref=e18]: Create structured training plans for Apple Watch and Garmin. Block-based builder for intervals, tempo runs, and custom workouts. No subscriptions. No shouting. Just workouts that work.
+      - generic [ref=e19]:
+        - link "GET STARTED →" [ref=e20] [cursor=pointer]:
+          - /url: /register
+        - link "SIGN IN" [ref=e21] [cursor=pointer]:
+          - /url: /login
+    - generic [ref=e22]:
+      - generic [ref=e23]:
+        - heading "Block-based builder" [level=3] [ref=e24]
+        - paragraph [ref=e25]: Stack steps like LEGO. Warmup → intervals → cooldown. Each block gets its own pace, heart rate, or power target.
+      - generic [ref=e26]:
+        - heading "Send to watch" [level=3] [ref=e27]
+        - paragraph [ref=e28]: Works with Apple Watch and Garmin devices. One tap to sync your workout and start training.
+      - generic [ref=e29]:
+        - heading "Your data, always" [level=3] [ref=e30]
+        - paragraph [ref=e31]: Export workouts anytime. API access for automation. No lock-in. Your training plans belong to you.
+  - contentinfo [ref=e32]:
+    - paragraph [ref=e34]: © 2026 Workouter. Build better workouts.

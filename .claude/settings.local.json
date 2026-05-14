@@ -41,7 +41,10 @@
       "Bash(git commit:*)",
       "Bash(git push)",
       "Bash(git diff:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(rm:*)",
+      "Bash(npm view:*)",
+      "Bash(NODE_ENV=production next build:*)"
     ],
     "deny": [],
     "ask": []

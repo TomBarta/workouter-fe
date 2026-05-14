@@ -30,3 +30,5 @@ next-env.d.ts
 
 # aider
 .aider*
+# next-agents-md
+.next-docs/

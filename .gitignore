@@ -18,8 +18,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# env files
+# env files — ignore all variants but allow the example template to be tracked
 .env*
+!.env.example
 
 # vercel
 .vercel

@@ -13,6 +13,7 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
     "@prisma/client": "^6.17.1",
+    "@sentry/nextjs": "^10.52.0",
     "bcryptjs": "^2.4.3",
     "next": "16.2.6",
     "next-auth": "^5.0.0-beta.25",

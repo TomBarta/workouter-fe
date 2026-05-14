@@ -5,7 +5,10 @@ import { withSentryConfig } from "@sentry/nextjs";
 // Base Next.js configuration
 // ---------------------------------------------------------------------------
 const nextConfig: NextConfig = {
-  /* config options here */
+  experimental: {
+    // Enable instrumentation hook for server-side initialization
+    instrumentationHook: true,
+  },
 };
 
 // ---------------------------------------------------------------------------

@@ -316,6 +316,100 @@ Set the following in your hosting platform (Vercel, Fly.io, AWS, etc.) before de
 
 ---
 
+## Troubleshooting GlitchTip Integration
+
+### No events appearing in GlitchTip
+
+1. **Check DSN configuration**
+   - Verify `NEXT_PUBLIC_SENTRY_DSN` is set (visible in browser console)
+   - Check browser Network tab for requests to `/api/tunnel`
+   - Ensure DSN format is correct: `https://<key>@<host>/<projectId>`
+
+2. **Check server logs**
+   - Look for tunnel errors: `[tunnel] Failed to reach GlitchTip upstream`
+   - Check for configuration warnings in development mode
+
+3. **Test the tunnel endpoint**
+   ```bash
+   curl -X POST http://localhost:3000/api/tunnel \
+     -H "Content-Type: application/x-sentry-envelope" \
+     -d '{"dsn":"YOUR_DSN","event_id":"test"}'
+   ```
+
+### Source maps not working
+
+1. **Verify build-time variables**
+   - All `SENTRY_*` variables must be set during `next build` in CI
+   - Check: `SENTRY_URL`, `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN`
+
+2. **Check build logs**
+   - Look for "Uploading source maps" message from Sentry webpack plugin
+   - Verify no upload errors occurred
+
+3. **Verify SENTRY_URL**
+   - Must point to your GlitchTip instance (e.g., `https://app.glitchtip.com`)
+   - **Not** `https://sentry.io` (unless using hosted Sentry)
+
+4. **Check GlitchTip Releases page**
+   - Navigate to Settings → Releases in GlitchTip
+   - Confirm a release matching `SENTRY_RELEASE` appears with source maps
+
+### 401 errors being captured despite filter
+
+The `beforeSend` filter only drops specific auth-related errors:
+- Exception type must be `HTTPError`, `FetchError`, or `Error`
+- Message must match: `^(Unauthorized|401 Unauthorized)$` or `^401:\s`
+- Or response status code is exactly 401
+
+If legitimate errors are being dropped:
+1. Check error type and message format
+2. Adjust the regex in `sentry.*.config.ts` files
+3. Consider making the filter even more specific
+
+### Tunnel endpoint returns 400/500 errors
+
+Common issues:
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| 400 - Empty request body | No envelope sent | Check client SDK initialization |
+| 400 - Invalid JSON | Malformed envelope | Check Sentry SDK version compatibility |
+| 400 - DSN host mismatch | Wrong `NEXT_PUBLIC_SENTRY_DSN` | Verify DSN matches your GlitchTip instance |
+| 400 - Invalid project ID | Non-numeric project ID | Check DSN format |
+| 413 - Payload too large | Envelope > 1MB | Check for overly verbose error data |
+| 500 - Tunnel not configured | Missing DSN in production | Set `NEXT_PUBLIC_SENTRY_DSN` env var |
+| 502 - Upstream failure | GlitchTip unreachable | Check GlitchTip server status and network |
+
+### Health check fails
+
+```bash
+# Test database connectivity
+curl http://localhost:3000/api/health
+
+# Expected response (success):
+{"status":"healthy","timestamp":"2024-01-15T12:00:00.000Z","services":{"database":"ok"}}
+
+# Expected response (failure):
+{"status":"unhealthy","error":"connect ECONNREFUSED 127.0.0.1:5432"}
+```
+
+If unhealthy:
+1. Verify `DATABASE_URL` is correct
+2. Check PostgreSQL is running
+3. Verify database accepts connections from your app
+4. Check Prisma client is initialized: `npx prisma generate`
+
+### Development mode warnings
+
+These warnings are **expected** in development and help you catch configuration issues:
+
+```
+[tunnel] NEXT_PUBLIC_SENTRY_DSN is not set — skipping host validation.
+```
+**Solution:** Add `NEXT_PUBLIC_SENTRY_DSN` to `.env.local` to test tunnel security
+
+---
+
 ## Next Steps
 
 1. Add workout model to Prisma schema

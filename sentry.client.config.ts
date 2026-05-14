@@ -4,6 +4,22 @@
 
 import * as Sentry from "@sentry/nextjs";
 
+/**
+ * Helper to safely extract HTTP status code from a Sentry event
+ */
+function getResponseStatusCode(event: Sentry.Event): number | undefined {
+  const response = event.contexts?.response;
+  if (
+    response &&
+    typeof response === "object" &&
+    "status_code" in response &&
+    typeof response.status_code === "number"
+  ) {
+    return response.status_code;
+  }
+  return undefined;
+}
+
 Sentry.init({
   // ---------------------------------------------------------------------------
   // Core — GlitchTip DSN
@@ -52,25 +68,25 @@ Sentry.init({
   // (e.g. probing session state on page load) and do not represent bugs.
   // ---------------------------------------------------------------------------
   beforeSend(event) {
-    // Drop events whose primary exception value contains "Unauthorized" or
-    // whose HTTP response status is 401.
     const exceptions = event.exception?.values ?? [];
 
     for (const exception of exceptions) {
       const message = exception.value ?? "";
 
+      // Only drop if it's specifically an HTTP auth-related error
       if (
-        /unauthorized/i.test(message) ||
-        /401/i.test(message)
+        (exception.type === "HTTPError" ||
+          exception.type === "FetchError" ||
+          exception.type === "Error") &&
+        (/^(Unauthorized|401 Unauthorized)$/i.test(message) ||
+          /^401:\s/i.test(message))
       ) {
         return null; // returning null drops the event entirely
       }
     }
 
-    // Also drop if the event itself carries a 401 status code in its request
-    // context (some SDKs surface this differently).
-    const statusCode = (event.contexts?.response as { status_code?: number } | undefined)
-      ?.status_code;
+    // Also drop if the event itself carries a 401 status code in its response context
+    const statusCode = getResponseStatusCode(event);
 
     if (statusCode === 401) {
       return null;

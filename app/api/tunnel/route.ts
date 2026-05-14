@@ -39,6 +39,19 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // ---------------------------------------------------------------------------
+// Configuration
+// ---------------------------------------------------------------------------
+
+// Maximum envelope size to prevent DoS attacks (1MB)
+const MAX_ENVELOPE_SIZE = 1024 * 1024;
+
+// Opt into Node.js runtime for better error handling and logging
+export const runtime = "nodejs";
+
+// Force dynamic behavior to ensure fresh validation on every request
+export const dynamic = "force-dynamic";
+
+// ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
@@ -47,7 +60,14 @@ interface EnvelopeHeader {
   dsn?: string;
   event_id?: string;
   sent_at?: string;
-  [key: string]: unknown;
+  sdk?: {
+    name?: string;
+    version?: string;
+  };
+  trace?: {
+    trace_id?: string;
+    public_key?: string;
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -171,6 +191,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
   }
 
+  // Check envelope size to prevent DoS attacks
+  if (envelopeBody.length > MAX_ENVELOPE_SIZE) {
+    return NextResponse.json(
+      { error: "Envelope payload too large" },
+      { status: 413 }
+    );
+  }
+
   // -------------------------------------------------------------------------
   // 2. Extract the envelope header from the first line.
   //    The Sentry envelope spec guarantees the first line is always a JSON
@@ -208,6 +236,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   if (!parsed) {
     return NextResponse.json(
       { error: "Could not parse DSN from envelope header" },
+      { status: 400 }
+    );
+  }
+
+  // Validate project ID format (should be numeric)
+  if (!/^\d+$/.test(parsed.projectId)) {
+    return NextResponse.json(
+      { error: "Invalid project ID format" },
       { status: 400 }
     );
   }

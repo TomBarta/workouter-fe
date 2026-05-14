@@ -17,6 +17,7 @@ import type { Metadata } from "next";
 import { Archivo_Black, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import TelemetryInit from "@/app/components/TelemetryInit";
+import { Providers } from "@/components/Providers";
 
 // ---------------------------------------------------------------------------
 // Font configuration
@@ -95,7 +96,7 @@ export default function RootLayout({
          * It renders null so it has no visible impact on the page.
          */}
         <TelemetryInit />
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

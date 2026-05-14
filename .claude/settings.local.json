@@ -38,14 +38,9 @@
       "Bash(GOOGLE_DRIVE_OAUTH_CREDENTIALS=/Users/tom/.config/gdrive-mcp/credentials.json npx:*)",
       "mcp__notion__notion-create-pages",
       "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git push)",
-      "Bash(git diff:*)",
-      "Bash(git log:*)",
-      "Bash(rm:*)",
-      "Bash(npm view:*)",
-      "Bash(NODE_ENV=production next build:*)",
-      "Bash(git merge:*)"
+      "Bash(git rebase:*)",
+      "Bash(test:*)",
+      "Bash(git stash:*)"
     ],
     "deny": [],
     "ask": []

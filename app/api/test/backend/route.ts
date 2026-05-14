@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { proxyToBackend } from "@/app/lib/api-proxy";
 
 /**
  * GET /api/test/backend

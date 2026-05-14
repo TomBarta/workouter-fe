@@ -7,6 +7,8 @@
 
 const BACKEND_API_URL = process.env.BACKEND_API_URL || "http://localhost:8080";
 const BACKEND_API_KEY = process.env.BACKEND_API_KEY || "";
+const CF_ACCESS_CLIENT_ID = process.env.CF_ACCESS_CLIENT_ID || "";
+const CF_ACCESS_CLIENT_SECRET = process.env.CF_ACCESS_CLIENT_SECRET || "";
 
 export interface ProxyOptions {
   method?: string;
@@ -40,6 +42,12 @@ export async function proxyToBackend(
   // Add backend API key for authentication
   if (BACKEND_API_KEY) {
     requestHeaders["X-API-Key"] = BACKEND_API_KEY;
+  }
+
+  // Add Cloudflare Access service token headers for tunnel authentication
+  if (CF_ACCESS_CLIENT_ID && CF_ACCESS_CLIENT_SECRET) {
+    requestHeaders["CF-Access-Client-Id"] = CF_ACCESS_CLIENT_ID;
+    requestHeaders["CF-Access-Client-Secret"] = CF_ACCESS_CLIENT_SECRET;
   }
 
   // Add user context header if available
